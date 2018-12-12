@@ -25,7 +25,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
-  <artifactId>inception-app-webapp</artifactId>
+  <artifactId>inception-pluginserver-webapp</artifactId>
   <name>INCEpTION Plugin Server - Web-Application</name>
   <packaging>war</packaging>
   <dependencies>
