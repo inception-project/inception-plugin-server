@@ -31,6 +31,7 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.wicketstuff.annotation.mount.MountPath;
 
 import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
@@ -40,22 +41,21 @@ import de.tudarmstadt.ukp.clarin.webanno.support.wicket.ModelChangedVisitor;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.login.LoginPage;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.page.ApplicationPageBase;
 
-public abstract class PluginManagerPage
-    extends ApplicationPageBase
+@MountPath(value = "/pluginmgr/user.html")
+public class PluginManagerPage extends ApplicationPageBase
 {
 
     private static final long serialVersionUID = -7182183739204537244L;
 
-    // protected because UserPluginManagerPage will need to know the current user
-    protected @SpringBean UserDao userRepository;
+    private @SpringBean UserDao userRepository;
 
     private PluginPanel plugins;
 
-    private PluginDetailForm pluginDetails;
+    protected PluginDetailForm pluginDetails;
 
     private IModel<PlaceholderPlugin> selectedPlugin;
 
-    private class PluginDetailForm
+    class PluginDetailForm
         extends Form<PlaceholderPlugin>
     {
 
@@ -74,7 +74,7 @@ public abstract class PluginManagerPage
 
             add(new TextField<String>("version"));
 
-            add(new TextField<String>("author").add(enabledWhen(() -> isCreate)));
+            add(new TextField<String>("author"));
 
             add(new TextField<String>("description"));
 
@@ -83,6 +83,8 @@ public abstract class PluginManagerPage
             add(new CheckBox("enabled"));
 
             add(new ListChoice<String>("versions", Arrays.asList("0.0.1")));
+                   
+            add(new LambdaAjaxButton<>("withdraw", PluginManagerPage.this::actionWithdraw));
 
             add(new LambdaAjaxButton<>("save", PluginManagerPage.this::actionSave));
 
@@ -135,7 +137,7 @@ public abstract class PluginManagerPage
         add(pluginDetails);
     }
 
-    public void actionSave(AjaxRequestTarget aTarget, Form<User> aForm)
+    public void actionSave(AjaxRequestTarget aTarget, Form<PlaceholderPlugin> aForm)
     {
         info("Plugin details would have been saved if this was the real app.");
     }
@@ -146,10 +148,19 @@ public abstract class PluginManagerPage
         aTarget.add(pluginDetails);
         aTarget.add(plugins);
     }
+    
+    public void actionWithdraw(AjaxRequestTarget aTarget, Form<PlaceholderPlugin> aForm)
+    {
+        info("The selected plugin version would have been withdrawn if this was the real app.");
+    }
 
     /**
      * @return menu items corresponding to the plugins that can be managed by this PluginManagerPage
      *         instance.
      */
-    protected abstract List<PlaceholderPlugin> applicablePlugins();
+    protected List<PlaceholderPlugin> applicablePlugins()
+    {
+        // TODO return all plugins that have been uploaded by the current user
+        return PlaceholderPluginList.userPlugins();
+    }
 }

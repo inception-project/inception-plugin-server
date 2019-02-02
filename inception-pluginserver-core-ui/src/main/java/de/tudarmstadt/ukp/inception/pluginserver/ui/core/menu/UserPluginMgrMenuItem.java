@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 
 import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItem;
-import de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager.UserPluginManagerPage;
+import de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager.PluginManagerPage;
 
 @Component
 public class UserPluginMgrMenuItem implements MenuItem
@@ -52,7 +52,7 @@ public class UserPluginMgrMenuItem implements MenuItem
     @Override
     public Class<? extends Page> getPageClass()
     {
-        return UserPluginManagerPage.class;
+        return PluginManagerPage.class;
     }
 
     @Override
