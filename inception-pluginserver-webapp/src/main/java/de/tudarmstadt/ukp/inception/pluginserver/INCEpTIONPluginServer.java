@@ -33,8 +33,6 @@ import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
@@ -94,7 +92,7 @@ public class INCEpTIONPluginServer
     @Override
     protected SpringApplicationBuilder createSpringApplicationBuilder()
     {
-    	SpringApplicationBuilder builder = super.createSpringApplicationBuilder();
+        SpringApplicationBuilder builder = super.createSpringApplicationBuilder();
         builder.properties("running.from.commandline=false");
         init(builder);
         return builder;
@@ -113,23 +111,6 @@ public class INCEpTIONPluginServer
         // it up from there in addition to reading the built-in application.properties file.
         aBuilder.properties("spring.config.location="
                 + "${inception.pluginserver.home:${user.home}/.inception-pluginserver}/settings.properties");
-        
-        // form spring configuration
-        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(SpringConfiguration.class);
-        
-        // retrieves automatically the extensions for the Greeting.class extension point
-        // TestAPI api
-        Greetings greetings = applicationContext.getBean(Greetings.class);
-        greetings.printGreetings();
-
-        // stop plugins
-        //PluginManager pluginManager = applicationContext.getBean(PluginManager.class);
-        /*
-        // retrieves manually the extensions for the Greeting.class extension point
-        List<Greeting> greetings = pluginManager.getExtensions(Greeting.class);
-        System.out.println("greetings.size() = " + greetings.size());
-        */
-        //pluginManager.stopPlugins();
     }
     
     public static void main(String[] args) throws Exception
