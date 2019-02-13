@@ -1,6 +1,5 @@
 package de.tudarmstadt.ukp.inception.pluginserver;
 
-import org.pf4j.demo.api.Greeting;
 import org.pf4j.spring.SpringPluginManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;

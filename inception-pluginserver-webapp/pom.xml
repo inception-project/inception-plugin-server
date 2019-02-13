@@ -50,6 +50,10 @@
       <groupId>de.tudarmstadt.ukp.inception.pluginserver</groupId>
       <artifactId>inception-pluginserver-doc</artifactId>
     </dependency>
+    <dependency>
+      <groupId>de.tudarmstadt.ukp.inception.pluginserver</groupId>
+      <artifactId>inception-pluginserver-api</artifactId>
+    </dependency>
 
     <!-- WICKET DEPENDENCIES -->
     <dependency>
