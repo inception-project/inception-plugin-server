@@ -20,6 +20,8 @@ package de.tudarmstadt.ukp.inception.pluginserver.ui.core.menubar;
 import static de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaBehavior.visibleWhen;
 
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaStatelessLink;

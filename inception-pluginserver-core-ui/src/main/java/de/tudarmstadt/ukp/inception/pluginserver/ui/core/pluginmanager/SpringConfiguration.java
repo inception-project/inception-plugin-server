@@ -1,4 +1,4 @@
-package de.tudarmstadt.ukp.inception.pluginserver;
+package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager;
 
 import org.pf4j.spring.SpringPluginManager;
 import org.springframework.context.ApplicationContext;
@@ -11,12 +11,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class SpringConfiguration {
-	@Bean
+    @Bean
     public SpringPluginManager pluginManager() {
-		/*
-		 * need specify the correct path 
-		 * now actual path for package plugin target
-		 */
+        /*
+         * need specify the correct path 
+         * now actual path for package plugin target
+         */
         return new SpringPluginManager(Paths.get("D:\\plugins"));
     }
 
@@ -26,3 +26,4 @@ public class SpringConfiguration {
         return new Plugins();
     }
 }
+

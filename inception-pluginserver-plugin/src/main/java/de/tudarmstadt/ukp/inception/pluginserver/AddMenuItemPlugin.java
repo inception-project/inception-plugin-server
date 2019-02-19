@@ -24,6 +24,10 @@ import org.pf4j.Plugin;
 import org.pf4j.PluginWrapper;
 import org.pf4j.RuntimeMode;
 
+import de.tudarmstadt.ukp.clarin.webanno.ui.core.page.ApplicationPageBase;
+import de.tudarmstadt.ukp.inception.pluginserver.ui.ApiUiCore;
+import de.tudarmstadt.ukp.inception.pluginserver.ui.core.menubar.MenuBar;
+
 public class AddMenuItemPlugin extends Plugin {
 
     public AddMenuItemPlugin(PluginWrapper wrapper) {
@@ -50,6 +54,16 @@ public class AddMenuItemPlugin extends Plugin {
         @Override
         public String getTestMessage() {
             return "item added";
+        }
+
+    }
+    
+    @Extension
+    public static class AddMenuItemApiUiCore implements ApiUiCore {
+        
+        @Override
+        public String getMenuItem() {
+            return "Plugin#1 AddMenuItemPlugin";
         }
 
     }

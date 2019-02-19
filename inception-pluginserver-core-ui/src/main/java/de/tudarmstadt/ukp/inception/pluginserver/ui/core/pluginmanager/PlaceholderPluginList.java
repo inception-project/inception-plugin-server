@@ -17,16 +17,45 @@
  */
 package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import de.tudarmstadt.ukp.inception.pluginserver.Api;
+import de.tudarmstadt.ukp.inception.pluginserver.ui.ApiUiCore;
 
 public class PlaceholderPluginList
 {
     public static List<PlaceholderPlugin> userPlugins()
     {
-        return Arrays.stream(new String[] {"My first plugin",
-                "My second plugin", "My third plugin"})
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+
+        Plugins plugins = applicationContext.getBean(Plugins.class); 
+        
+        ArrayList<String> manuitems = new ArrayList<String>();
+        
+        manuitems.add("My first plugin");
+        manuitems.add("My second plugin");
+        manuitems.add("My third plugin");
+        
+        if(plugins.hasPlugins()) {
+            List<ApiUiCore> oPlugins = plugins.getPlugins();
+              
+            for (ApiUiCore plugin : oPlugins) {
+                manuitems.add(plugin.getMenuItem());
+            }
+        }
+        
+        Stream<Object> stringStream = Stream.of(manuitems.toArray());
+        
+        String[] stringArray = stringStream.toArray(size -> new String[size]);
+
+        return Arrays.stream(stringArray)
                 .map(x -> new PlaceholderPlugin(x, "Me",
                         "0.0.1", x, "Example License", true))
                 .collect(Collectors.toList());

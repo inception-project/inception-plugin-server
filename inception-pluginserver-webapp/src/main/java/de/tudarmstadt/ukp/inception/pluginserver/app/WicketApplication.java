@@ -17,24 +17,47 @@
  */
 package de.tudarmstadt.ukp.inception.pluginserver.app;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.wicket.Page;
+import org.pf4j.PluginManager;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.WicketApplicationBase;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.page.ApplicationPageBase;
+import de.tudarmstadt.ukp.inception.pluginserver.Api;
+import de.tudarmstadt.ukp.inception.pluginserver.Plugins;
+import de.tudarmstadt.ukp.inception.pluginserver.SpringConfiguration;
 import de.tudarmstadt.ukp.inception.pluginserver.app.config.InceptionResourcesBehavior;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.core.dashboard.project.DashboardPage;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.core.menubar.MenuBar;
+import de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager.PlaceholderPlugin;
 
 @org.springframework.stereotype.Component("wicketApplication")
 public class WicketApplication
     extends WicketApplicationBase
-{
+{    
     @Override
     protected void initOnce()
     {
         super.initOnce();
-
+                
         setMetaData(ApplicationPageBase.MENUBAR_CLASS, MenuBar.class);
+        
+//        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+//        
+//        Plugins plugins = applicationContext.getBean(Plugins.class);
+//        
+//        if(plugins.hasPlugins()) {
+//            List<Api> oPlugins = plugins.getPlugins();
+//            
+//            for (Api plugin : oPlugins) {
+//                //setMetaData(ApplicationPageBase.MENUBAR_CLASS, plugin.addMenuItem());
+//            }
+//        }
     }
 
     /**

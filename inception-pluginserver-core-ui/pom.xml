@@ -73,5 +73,12 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
     </dependency>
+    
+    <dependency>
+      <!-- API -->
+      <groupId>de.tudarmstadt.ukp.inception.pluginserver</groupId>
+      <artifactId>inception-pluginserver-api</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency> 
   </dependencies>
 </project>
