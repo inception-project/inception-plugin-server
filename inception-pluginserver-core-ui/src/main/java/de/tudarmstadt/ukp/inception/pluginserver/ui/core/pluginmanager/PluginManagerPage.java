@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.ListChoice;
@@ -82,13 +83,19 @@ public class PluginManagerPage extends ApplicationPageBase
 
             add(new CheckBox("enabled"));
 
-            add(new ListChoice<String>("versions", Arrays.asList("0.0.1")));
+            add(new ListChoice<String>("versions", Model.of("0.0.1"), Arrays.asList("0.0.1")));
                    
             add(new LambdaAjaxButton<>("withdraw", PluginManagerPage.this::actionWithdraw));
 
             add(new LambdaAjaxButton<>("save", PluginManagerPage.this::actionSave));
 
             add(new LambdaAjaxLink("cancel", PluginManagerPage.this::actionCancel));
+            
+            add(new Label("downloads", "0"));
+            
+            add(new Label("totalDownloads", "0"));
+            
+            add(new Label("visits", "0"));
 
         }
 

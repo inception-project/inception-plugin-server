@@ -30,6 +30,7 @@ public class PlaceholderPlugin
     private String name, author, version, description, license;
     private boolean enabled;
     private List<PlaceholderPlugin> versions;
+    private int downloads, visits;
 
     public String getName()
     {
@@ -122,6 +123,26 @@ public class PlaceholderPlugin
     public void setVersions(List<PlaceholderPlugin> versions)
     {
         this.versions = versions;
+    }
+
+    public int getDownloads()
+    {
+        return downloads;
+    }
+
+    public void setDownloads(int downloads)
+    {
+        this.downloads = downloads;
+    }
+
+    public int getVisits()
+    {
+        return visits;
+    }
+
+    public void setVisits(int visits)
+    {
+        this.visits = visits;
     }
 
 }
