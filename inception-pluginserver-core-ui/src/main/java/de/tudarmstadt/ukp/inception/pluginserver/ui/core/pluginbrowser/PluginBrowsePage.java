@@ -67,6 +67,7 @@ public class PluginBrowsePage
                     selectPlugin(item.getModelObject()));
                 pluginLink.add(new Label("name", item.getModelObject().getName()));
                 item.add(pluginLink);
+                item.add(new Label("version", item.getModelObject().getVersion()));
             }
 
         };

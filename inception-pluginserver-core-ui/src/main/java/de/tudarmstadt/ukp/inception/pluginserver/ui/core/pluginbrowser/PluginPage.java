@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.wicketstuff.annotation.mount.MountPath;
 
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItem;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItemRegistry;
@@ -31,8 +32,8 @@ import de.tudarmstadt.ukp.inception.pluginserver.ui.core.dashboard.DashboardMenu
 import de.tudarmstadt.ukp.inception.pluginserver.ui.core.dashboard.dashlet.CurrentPluginDashlet;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager.PlaceholderPlugin;
 
-public class PluginPage
-    extends ApplicationPageBase
+@MountPath(value = "/plugin.html")
+public class PluginPage extends ApplicationPageBase
 {
 
     private @SpringBean MenuItemRegistry menuItemService;
@@ -43,25 +44,24 @@ public class PluginPage
     public PluginPage()
     {
         this.plugin = Session.get().getMetaData(PluginBrowsePage.CURRENT_PLUGIN);
-        
-        if (plugin == null)
-        {
+
+        if (plugin == null) {
             setResponsePage(PluginBrowsePage.class);
         }
-        
+
         menu = new DashboardMenu("menu", LoadableDetachableModel.of(this::getMenuItems));
         add(menu);
-        
+
         add(new CurrentPluginDashlet("currentPluginDashlet"));
 
     }
-    
+
     private List<MenuItem> getMenuItems()
     {
         return menuItemService.getMenuItems().stream()
                 .filter(item -> item.getPath().matches("/pluginpage/[^/]+|/browsepage"))
                 .collect(Collectors.toList());
-        
+
     }
 
     private static final long serialVersionUID = 2090986921013118927L;
