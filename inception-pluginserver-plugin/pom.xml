@@ -30,58 +30,19 @@
   <packaging>jar</packaging>
 
   <dependencies>
-    <dependency>
-      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-      <artifactId>webanno-ui-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-      <artifactId>webanno-support</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-      <artifactId>webanno-security</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-spring</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-request</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.wicketstuff</groupId>
-      <artifactId>wicketstuff-annotation</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.danekja</groupId>
-      <artifactId>jdk-serializable-functional</artifactId>
-    </dependency>
   
     <dependency>
       <!-- UI -->
       <groupId>de.tudarmstadt.ukp.inception.pluginserver</groupId>
       <artifactId>inception-pluginserver-core-ui</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
     </dependency>
+    
     <dependency>
-      <!-- API -->
-      <groupId>de.tudarmstadt.ukp.inception.pluginserver</groupId>
-      <artifactId>inception-pluginserver-api</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency> 
-    <dependency>
-      <!-- PF4J -->
-	  <groupId>org.pf4j</groupId>
-	  <artifactId>pf4j-spring</artifactId>
-	  <version>0.5.0</version>
-	</dependency>  
+      <groupId>org.pf4j</groupId>
+      <artifactId>pf4j</artifactId>
+      <version>2.6.0</version>
+    </dependency>
+    
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>

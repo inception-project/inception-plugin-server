@@ -23,7 +23,6 @@ import javax.swing.JWindow;
 import javax.validation.Validator;
 
 import org.apache.catalina.connector.Connector;
-import org.pf4j.PluginManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigurationExcludeFilter;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -116,21 +115,6 @@ public class INCEpTIONPluginServer
                 + "${inception.pluginserver.home:${user.home}/.inception-pluginserver}/settings.properties");
         
         // form spring configuration
-        
-        
-        // retrieves automatically the extensions for the Greeting.class extension point
-        // TestAPI api
-        //Greetings greetings = applicationContext.getBean(Greetings.class);
-        //greetings.printGreetings();
-
-        // stop plugins
-        //PluginManager pluginManager = applicationContext.getBean(PluginManager.class);
-        /*
-        // retrieves manually the extensions for the Greeting.class extension point
-        List<Greeting> greetings = pluginManager.getExtensions(Greeting.class);
-        System.out.println("greetings.size() = " + greetings.size());
-        */
-        //pluginManager.stopPlugins();
     }
     
     public static void main(String[] args) throws Exception

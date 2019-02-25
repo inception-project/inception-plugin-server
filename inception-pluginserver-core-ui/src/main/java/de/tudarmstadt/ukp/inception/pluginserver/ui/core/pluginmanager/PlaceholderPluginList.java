@@ -26,7 +26,6 @@ import java.util.stream.Stream;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import de.tudarmstadt.ukp.inception.pluginserver.Api;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.ApiUiCore;
 
 public class PlaceholderPluginList

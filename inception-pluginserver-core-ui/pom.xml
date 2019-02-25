@@ -75,10 +75,15 @@
     </dependency>
     
     <dependency>
-      <!-- API -->
-      <groupId>de.tudarmstadt.ukp.inception.pluginserver</groupId>
-      <artifactId>inception-pluginserver-api</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency> 
+      <groupId>org.pf4j</groupId>
+      <artifactId>pf4j</artifactId>
+      <version>2.6.0</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.pf4j</groupId>
+      <artifactId>pf4j-spring</artifactId>
+      <version>0.5.0</version>
+    </dependency>
   </dependencies>
 </project>

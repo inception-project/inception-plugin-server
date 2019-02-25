@@ -28,9 +28,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.WicketApplicationBase;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.page.ApplicationPageBase;
-import de.tudarmstadt.ukp.inception.pluginserver.Api;
-import de.tudarmstadt.ukp.inception.pluginserver.Plugins;
-import de.tudarmstadt.ukp.inception.pluginserver.SpringConfiguration;
 import de.tudarmstadt.ukp.inception.pluginserver.app.config.InceptionResourcesBehavior;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.core.dashboard.project.DashboardPage;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.core.menubar.MenuBar;
@@ -46,18 +43,6 @@ public class WicketApplication
         super.initOnce();
                 
         setMetaData(ApplicationPageBase.MENUBAR_CLASS, MenuBar.class);
-        
-//        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(SpringConfiguration.class);
-//        
-//        Plugins plugins = applicationContext.getBean(Plugins.class);
-//        
-//        if(plugins.hasPlugins()) {
-//            List<Api> oPlugins = plugins.getPlugins();
-//            
-//            for (Api plugin : oPlugins) {
-//                //setMetaData(ApplicationPageBase.MENUBAR_CLASS, plugin.addMenuItem());
-//            }
-//        }
     }
 
     /**

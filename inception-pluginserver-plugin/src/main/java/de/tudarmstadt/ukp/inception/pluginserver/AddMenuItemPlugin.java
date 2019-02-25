@@ -24,9 +24,8 @@ import org.pf4j.Plugin;
 import org.pf4j.PluginWrapper;
 import org.pf4j.RuntimeMode;
 
-import de.tudarmstadt.ukp.clarin.webanno.ui.core.page.ApplicationPageBase;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.ApiUiCore;
-import de.tudarmstadt.ukp.inception.pluginserver.ui.core.menubar.MenuBar;
+
 
 public class AddMenuItemPlugin extends Plugin {
 
@@ -46,16 +45,6 @@ public class AddMenuItemPlugin extends Plugin {
     @Override
     public void stop() {
         System.out.println("AddMenuItemPlugin.stop()");
-    }
-
-    @Extension
-    public static class AddMenuItemApi implements Api {
-
-        @Override
-        public String getTestMessage() {
-            return "item added";
-        }
-
     }
     
     @Extension
