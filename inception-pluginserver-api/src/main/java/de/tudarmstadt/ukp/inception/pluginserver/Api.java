@@ -15,11 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package de.tudarmstadt.ukp.inception.pluginserver;
 
 import org.pf4j.ExtensionPoint;
-
-
 
 public interface Api extends ExtensionPoint {
 

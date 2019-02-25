@@ -32,7 +32,8 @@ public class PlaceholderPluginList
 {
     public static List<PlaceholderPlugin> userPlugins()
     {
-        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+        ApplicationContext applicationContext = 
+                new AnnotationConfigApplicationContext(SpringConfiguration.class);
 
         Plugins plugins = applicationContext.getBean(Plugins.class); 
         
@@ -42,7 +43,7 @@ public class PlaceholderPluginList
         manuitems.add("My second plugin");
         manuitems.add("My third plugin");
         
-        if(plugins.hasPlugins()) {
+        if (plugins.hasPlugins()) {
             List<ApiUiCore> oPlugins = plugins.getPlugins();
               
             for (ApiUiCore plugin : oPlugins) {

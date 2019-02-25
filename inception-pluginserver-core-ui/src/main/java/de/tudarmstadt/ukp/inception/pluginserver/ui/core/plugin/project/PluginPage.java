@@ -20,9 +20,9 @@ package de.tudarmstadt.ukp.inception.pluginserver.ui.core.plugin.project;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.markup.html.basic.Label;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
@@ -47,7 +47,7 @@ public class PluginPage extends ApplicationPageBase
     private PluginMenu menu;
 
     public PluginPage()
-    {   	
+    {   
         setStatelessHint(true);
         setVersioned(false);
         

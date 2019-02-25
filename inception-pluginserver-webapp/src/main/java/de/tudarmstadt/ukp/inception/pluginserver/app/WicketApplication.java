@@ -17,21 +17,13 @@
  */
 package de.tudarmstadt.ukp.inception.pluginserver.app;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.wicket.Page;
-import org.pf4j.PluginManager;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.WicketApplicationBase;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.page.ApplicationPageBase;
 import de.tudarmstadt.ukp.inception.pluginserver.app.config.InceptionResourcesBehavior;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.core.dashboard.project.DashboardPage;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.core.menubar.MenuBar;
-import de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager.PlaceholderPlugin;
 
 @org.springframework.stereotype.Component("wicketApplication")
 public class WicketApplication
