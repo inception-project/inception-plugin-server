@@ -22,8 +22,6 @@ import org.pf4j.ExtensionPoint;
 
 
 public interface ApiUiCore extends ExtensionPoint {
-
-    //String getTestMessage();
     
     String getMenuItem();
 
