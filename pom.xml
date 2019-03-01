@@ -94,7 +94,7 @@
     </pluginRepository>
   </pluginRepositories>
   <properties>
-    <webanno.version>3.5.0-SNAPSHOT</webanno.version>
+    <webanno.version>3.6.0-SNAPSHOT</webanno.version>
     <spring.version>5.1.1.RELEASE</spring.version>
     <spring.boot.version>1.5.17.RELEASE</spring.boot.version>
     <spring.security.version>4.2.9.RELEASE</spring.security.version>
