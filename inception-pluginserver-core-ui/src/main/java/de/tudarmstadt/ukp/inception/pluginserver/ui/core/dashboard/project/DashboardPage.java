@@ -17,11 +17,13 @@
  */
 package de.tudarmstadt.ukp.inception.pluginserver.ui.core.dashboard.project;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.pf4j.PluginManager;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
@@ -30,7 +32,9 @@ import de.tudarmstadt.ukp.clarin.webanno.ui.core.login.LoginPage;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItem;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItemRegistry;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.page.ApplicationPageBase;
+import de.tudarmstadt.ukp.inception.pluginserver.ui.ApiUiCore;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.core.dashboard.DashboardMenu;
+import de.tudarmstadt.ukp.inception.pluginserver.ui.core.menu.NewPluginMenuItem;
 
 /**
  * Project dashboard page
@@ -42,6 +46,7 @@ public class DashboardPage extends ApplicationPageBase
 
     private @SpringBean UserDao userRepository;
     private @SpringBean MenuItemRegistry menuItemService;
+    private @SpringBean PluginManager pluginManager;
 
     private DashboardMenu menu;
 
@@ -53,6 +58,7 @@ public class DashboardPage extends ApplicationPageBase
         // In case we restore a saved session, make sure the user actually still exists in the DB.
         // redirect to login page (if no usr is found, admin/admin will be created)
         User user = userRepository.getCurrentUser();
+        
         if (user == null) {
             setResponsePage(LoginPage.class);
         }
@@ -63,8 +69,33 @@ public class DashboardPage extends ApplicationPageBase
     
     private List<MenuItem> getMenuItems()
     {
-        return menuItemService.getMenuItems().stream()
+//        List<MenuItem> menuItems = menuItemService.getMenuItems().stream()
+//                .filter(item -> item.getPath().matches("/[^/]+"))
+//                .collect(Collectors.toList());
+        
+        List<MenuItem> menuItems = menuItemService.getMenuItems();
+        
+        List<ApiUiCore> plugins = pluginManager.getExtensions(ApiUiCore.class);
+        System.out.println(String.format("Found %d extensions for extension point '%s'", 
+                plugins.size(), ApiUiCore.class.getName()));
+        
+        NewPluginMenuItem menuItem = new NewPluginMenuItem();
+        
+        for (ApiUiCore plugin : plugins) {
+            System.out.println(">>> " + plugin.getMenuItem().getName());
+            System.out.println(">>> pluginName " + plugin.getPluginName());
+            
+            menuItem.setIcon("images/pluginmgr.png");
+            menuItem.setPath("/pluginmgr");
+            menuItem.setLabel(plugin.getPluginName());
+        }
+        
+        menuItems = menuItems.stream()
                 .filter(item -> item.getPath().matches("/[^/]+"))
                 .collect(Collectors.toList());
+        
+//        menuItems.add(menuItem);
+        
+        return menuItems;
     }
 }

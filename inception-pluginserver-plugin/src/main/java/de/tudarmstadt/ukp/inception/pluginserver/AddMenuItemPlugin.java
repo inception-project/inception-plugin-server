@@ -19,12 +19,12 @@
 package de.tudarmstadt.ukp.inception.pluginserver;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.pf4j.Extension;
 import org.pf4j.Plugin;
 import org.pf4j.PluginWrapper;
 import org.pf4j.RuntimeMode;
 
+import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItem;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.ApiUiCore;
 
 
@@ -37,7 +37,7 @@ public class AddMenuItemPlugin extends Plugin {
     @Override
     public void start() {
         System.out.println("AddMenuItemPlugin.start()");
-        // for testing the development mode
+        
         if (RuntimeMode.DEVELOPMENT.equals(wrapper.getRuntimeMode())) {
             System.out.println(StringUtils.upperCase("AddMenuItemPlugin"));
         }
@@ -52,10 +52,15 @@ public class AddMenuItemPlugin extends Plugin {
     public static class AddMenuItemApiUiCore implements ApiUiCore {
         
         @Override
-        public String getMenuItem() {
-            return "Plugin#1 AddMenuItemPlugin";
+        public String getPluginName() { 
+            NewPluginMenuItem menuItem = new NewPluginMenuItem();
+            return menuItem.getLabel();
+        }
+        
+        @Override
+        public Class<? extends MenuItem> getMenuItem() { 
+            return NewPluginMenuItem.class;
         }
 
     }
-
 }

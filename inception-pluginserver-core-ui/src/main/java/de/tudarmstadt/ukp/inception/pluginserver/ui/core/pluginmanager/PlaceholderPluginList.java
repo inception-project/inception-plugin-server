@@ -23,33 +23,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import de.tudarmstadt.ukp.inception.pluginserver.ui.ApiUiCore;
-
 public class PlaceholderPluginList
 {
     public static List<PlaceholderPlugin> userPlugins()
     {
-        ApplicationContext applicationContext = 
-                new AnnotationConfigApplicationContext(SpringConfiguration.class);
-
-        Plugins plugins = applicationContext.getBean(Plugins.class); 
-        
         ArrayList<String> manuitems = new ArrayList<String>();
         
         manuitems.add("My first plugin");
         manuitems.add("My second plugin");
         manuitems.add("My third plugin");
-        
-        if (plugins.hasPlugins()) {
-            List<ApiUiCore> oPlugins = plugins.getPlugins();
-              
-            for (ApiUiCore plugin : oPlugins) {
-                manuitems.add(plugin.getMenuItem());
-            }
-        }
         
         Stream<Object> stringStream = Stream.of(manuitems.toArray());
         

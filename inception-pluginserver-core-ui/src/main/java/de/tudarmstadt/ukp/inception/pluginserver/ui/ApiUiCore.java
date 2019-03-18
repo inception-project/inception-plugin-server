@@ -19,10 +19,12 @@ package de.tudarmstadt.ukp.inception.pluginserver.ui;
 
 import org.pf4j.ExtensionPoint;
 
-
+import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItem;
 
 public interface ApiUiCore extends ExtensionPoint {
     
-    String getMenuItem();
+    String getPluginName();
+    
+    Class<? extends MenuItem> getMenuItem();
 
 }
