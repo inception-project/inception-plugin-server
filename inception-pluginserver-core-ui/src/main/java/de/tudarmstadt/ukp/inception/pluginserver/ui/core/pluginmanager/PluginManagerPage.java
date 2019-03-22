@@ -19,17 +19,18 @@ package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager;
 
 import static de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaBehavior.enabledWhen;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.ListChoice;
+import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.UrlTextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.wicketstuff.annotation.mount.MountPath;
 
@@ -42,18 +43,23 @@ import de.tudarmstadt.ukp.clarin.webanno.ui.core.login.LoginPage;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.page.ApplicationPageBase;
 
 @MountPath(value = "/pluginmgr/user.html")
-public class PluginManagerPage extends ApplicationPageBase
+public class PluginManagerPage
+    extends ApplicationPageBase
 {
 
     private static final long serialVersionUID = -7182183739204537244L;
 
     private @SpringBean UserDao userRepository;
 
-    private PluginPanel plugins;
+    protected PluginPanel plugins;
 
     protected PluginDetailForm pluginDetails;
 
     private IModel<PlaceholderPlugin> selectedPlugin;
+
+    private VersionPanel versions;
+
+    private IModel<PlaceholderPlugin> selectedVersion;
 
     class PluginDetailForm
         extends Form<PlaceholderPlugin>
@@ -76,14 +82,14 @@ public class PluginManagerPage extends ApplicationPageBase
 
             add(new TextField<String>("author"));
 
-            add(new TextField<String>("description"));
+            add(new TextArea<String>("description"));
 
             add(new TextField<String>("license"));
 
-            add(new CheckBox("enabled"));
+            add(new UrlTextField("projectPage", PropertyModel.of(this.getModel(), "projectPage")));
 
-            add(new ListChoice<String>("versions", Arrays.asList("0.0.1")));
-                   
+            add(new UrlTextField("docPage", PropertyModel.of(this.getModel(), "docPage")));
+
             add(new LambdaAjaxButton<>("withdraw", PluginManagerPage.this::actionWithdraw));
 
             add(new LambdaAjaxButton<>("save", PluginManagerPage.this::actionSave));
@@ -115,26 +121,42 @@ public class PluginManagerPage extends ApplicationPageBase
         }
 
         selectedPlugin = Model.of();
-
-        plugins = new PluginPanel("plugins", selectedPlugin, () -> applicablePlugins());
+        selectedVersion = Model.of();
+        plugins = makePluginPanel("plugins", selectedPlugin, () -> applicablePlugins());
+        versions = new VersionPanel("versions", selectedPlugin, selectedVersion);
 
         plugins.setCreateAction(_target -> {
-            selectedPlugin.setObject(new PlaceholderPlugin());
-            _target.add(plugins);
-            _target.add(pluginDetails);
-            _target.registerRespondListener(__target -> pluginDetails.isCreate = true);
+            // left empty for now
         });
 
         plugins.setChangeAction(_target -> {
+            versions.visitChildren(new ModelChangedVisitor(selectedPlugin));
+            pluginDetails.visitChildren(new ModelChangedVisitor(selectedVersion));
+            _target.add(versions);
+            _target.add(pluginDetails);
+        });
+
+        versions.setCreateAction(_target -> {
+            // left empty for now
+        });
+
+        versions.setChangeAction(_target -> {
             pluginDetails.isCreate = false;
-            pluginDetails.visitChildren(new ModelChangedVisitor(selectedPlugin));
+            pluginDetails.visitChildren(new ModelChangedVisitor(selectedVersion));
             _target.add(pluginDetails);
         });
 
         add(plugins);
+        add(versions);
 
-        pluginDetails = new PluginDetailForm("pluginDetails", selectedPlugin);
+        pluginDetails = new PluginDetailForm("pluginDetails", selectedVersion);
         add(pluginDetails);
+    }
+
+    protected PluginPanel makePluginPanel(String id, IModel<PlaceholderPlugin> model,
+            Supplier<List<PlaceholderPlugin>> plugins)
+    {
+        return new PluginPanel(id, model, plugins);
     }
 
     public void actionSave(AjaxRequestTarget aTarget, Form<PlaceholderPlugin> aForm)
@@ -145,10 +167,12 @@ public class PluginManagerPage extends ApplicationPageBase
     private void actionCancel(AjaxRequestTarget aTarget)
     {
         selectedPlugin.setObject(null);
+        selectedVersion.setObject(null);
         aTarget.add(pluginDetails);
+        aTarget.add(versions);
         aTarget.add(plugins);
     }
-    
+
     public void actionWithdraw(AjaxRequestTarget aTarget, Form<PlaceholderPlugin> aForm)
     {
         info("The selected plugin version would have been withdrawn if this was the real app.");

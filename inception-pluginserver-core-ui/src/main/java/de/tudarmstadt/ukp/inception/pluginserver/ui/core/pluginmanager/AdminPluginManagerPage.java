@@ -18,9 +18,11 @@
 package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxButton;
@@ -35,7 +37,7 @@ public class AdminPluginManagerPage extends PluginManagerPage
     public AdminPluginManagerPage()
     {
         super();
-        pluginDetails.add(new LambdaAjaxButton<>("remove", this::actionRemove));
+        pluginDetails.add(new LambdaAjaxButton<>("removeVersion", this::actionRemoveVersion));
     }
 
     @Override
@@ -45,9 +47,16 @@ public class AdminPluginManagerPage extends PluginManagerPage
         return PlaceholderPluginList.allPlugins();
     }
     
-    private void actionRemove(AjaxRequestTarget aTarget, Form<PlaceholderPlugin> aForm)
+    @Override
+    protected PluginPanel makePluginPanel(String id, IModel<PlaceholderPlugin> model,
+            Supplier<List<PlaceholderPlugin>> plugins)
     {
-        //TODO: remove the selected plugin from the server
+        return new AdminPluginPanel(id, model, plugins);
+    }
+    
+    private void actionRemoveVersion(AjaxRequestTarget aTarget, Form<PlaceholderPlugin> aForm)
+    {
+        //TODO: remove the selected plugin version from the server
     }
 
 }

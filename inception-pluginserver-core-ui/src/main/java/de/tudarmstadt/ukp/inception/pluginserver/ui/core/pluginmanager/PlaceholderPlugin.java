@@ -27,8 +27,8 @@ public class PlaceholderPlugin
 
     private static final long serialVersionUID = -4562347292826148146L;
 
-    private String name, author, version, description, license;
-    private boolean enabled;
+    private String name, author, version, description, license, projectPage, docPage;
+    private int id;
     private List<PlaceholderPlugin> versions;
 
     public String getName()
@@ -81,37 +81,56 @@ public class PlaceholderPlugin
         this.license = license;
     }
 
-    public boolean isEnabled()
+    public String getProjectPage()
     {
-        return enabled;
+        return projectPage;
     }
 
-    public void setEnabled(boolean enabled)
+    public void setProjectPage(String projectPage)
     {
-        this.enabled = enabled;
+        this.projectPage = projectPage;
+    }
+
+    public String getDocPage()
+    {
+        return docPage;
+    }
+
+    public void setDocPage(String docPage)
+    {
+        this.docPage = docPage;
     }
     
     public String toString()
     {
-        return name + " " + version;
+        return name + " (" + getID() + ") " + version;
+    }
+    
+    public String getID()
+    {
+        return Integer.toHexString(id);
     }
 
     public PlaceholderPlugin(String name, String author, String version, String description,
-            String license, boolean enabled)
+            String license, String projectPage, String docPage)
     {
         this.name = name;
         this.description = description;
         this.author = author;
         this.version = version;
-        this.setLicense(license);
-        this.enabled = enabled;
+        this.license = license;
+        this.projectPage = projectPage;
+        this.docPage = docPage;
+        
         this.versions = new LinkedList<>();
         versions.add(this);
+        
+        this.id = name.hashCode() ^ author.hashCode();
     }
 
     public PlaceholderPlugin()
     {
-        this("", "", "", "", "", false);
+        this("", "", "", "", "", "", "");
     }
 
     public List<PlaceholderPlugin> getVersions()

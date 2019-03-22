@@ -28,7 +28,7 @@ public class PlaceholderPluginList
         return Arrays.stream(new String[] {"My first plugin",
                 "My second plugin", "My third plugin"})
                 .map(x -> new PlaceholderPlugin(x, "Me",
-                        "0.0.1", x, "Example License", true))
+                        "0.0.1", x, "Example License", "", ""))
                 .collect(Collectors.toList());
     }
     
@@ -38,7 +38,7 @@ public class PlaceholderPluginList
         allPlugins.addAll(Arrays.stream(new String[] {"Someone else's first plugin",
                 "Someone else's second plugin", "Someone else's third plugin"})
                 .map(x -> new PlaceholderPlugin(x, "Someone else",
-                        "0.0.1", x, "Example License", true))
+                        "0.0.1", x, "Example License", "", ""))
                 .collect(Collectors.toList()));
         return allPlugins;
     }

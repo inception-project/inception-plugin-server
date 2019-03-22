@@ -23,15 +23,14 @@
     <div class="flex-content panel panel-default panel-flex"
       style="min-height: 10em;">
       <div class="panel-heading">
-        <h3 class="panel-title">Plugins</h3>
+        <h3 class="panel-title">Versions</h3>
       </div>
       <div class="scrolling panel-body fit-child-snug">
         <select wicket:id="plugin" class="form-control"></select>
       </div>
       <div class="panel-footer text-right">
-        <wicket:child />
-        <input type="button" wicket:id="create"
-          wicket:message="value:create" class="btn btn-primary" />
+        <input wicket:id="upload" type="submit"
+          class="btn btn-primary" wicket:message="value:versions.upload" />
       </div>
     </div>
   </wicket:panel>
