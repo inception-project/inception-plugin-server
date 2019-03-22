@@ -27,6 +27,9 @@ import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.ListPanel_ImplBase;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.OverviewListChoice;
 
+/**
+ * With this panel, a particular version can be selected from all versions of one plugin.
+ */
 public class VersionPanel
     extends ListPanel_ImplBase
 {
@@ -35,6 +38,16 @@ public class VersionPanel
     private IModel<PlaceholderPlugin> pluginModel;
     private OverviewListChoice<PlaceholderPlugin> overviewList;
 
+    /**
+     * Creates a VersionPanel.
+     * 
+     * @param id
+     *            The non-null id of this component
+     * @param pluginModel
+     *            The model of the plugin whose versions can be selected
+     * @param versionModel
+     *            The model of the selected plugin version
+     */
     public VersionPanel(String id, IModel<PlaceholderPlugin> pluginModel,
             IModel<PlaceholderPlugin> versionModel)
     {

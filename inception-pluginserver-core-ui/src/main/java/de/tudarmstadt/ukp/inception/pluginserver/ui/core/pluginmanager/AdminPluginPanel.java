@@ -25,6 +25,9 @@ import org.apache.wicket.model.IModel;
 
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
 
+/**
+ * This is a PluginPanel that includes a button to permanently remove a plugin from the database.
+ */
 public class AdminPluginPanel
     extends PluginPanel
 {
@@ -33,8 +36,11 @@ public class AdminPluginPanel
 
     /**
      * @param id
+     *            The non-null id of this component
      * @param aModel
+     *            The model of the plugin whose versions can be selected in a VersionPanel
      * @param plugins
+     *            A Supplier of a List of all plugins that the panel is supposed to list
      */
     public AdminPluginPanel(String id, IModel<PlaceholderPlugin> aModel,
             Supplier<List<PlaceholderPlugin>> plugins)
@@ -42,10 +48,20 @@ public class AdminPluginPanel
         super(id, aModel, plugins);
         add(new LambdaAjaxLink("removePlugin", this::actionRemovePlugin));
     }
-    
+
+    /**
+     * This method is called when the "Remove Plugin" button is clicked. It is supposed to do these things:
+     * <ul>
+     * <li>display an "Are you sure?" message - do nothing if the removal is cancelled</li>
+     * <li>permanently remove the selected plugin and all of its versions from the database</li>
+     * <li>unselect the selected plugin and version</li>
+     * <li>refresh the PluginDetailForm, the VersionPanel and the AdminPluginPanel</li>
+     * </ul>
+     * @param target The request target
+     */
     private void actionRemovePlugin(AjaxRequestTarget target)
     {
-        //TODO Remove all versins of the selected plugin from the server
+        // TODO Remove all versins of the selected plugin from the server
     }
 
 }

@@ -28,6 +28,9 @@ import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.ListPanel_ImplBase;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.OverviewListChoice;
 
+/**
+ * With this panel, a plugin can be selected from a list of plugins.
+ */
 public class PluginPanel
     extends ListPanel_ImplBase
 {
@@ -35,16 +38,27 @@ public class PluginPanel
     private static final long serialVersionUID = -4179642903213029874L;
 
     protected OverviewListChoice<PlaceholderPlugin> overviewList;
-    
+
+    /**
+     * Creates a PluginPanel.
+     * 
+     * @param id
+     *            The non-null id of this component
+     * @param aModel
+     *            The model of the plugin whose versions can be selected in a VersionPanel
+     * @param plugins
+     *            A Supplier of a List of all plugins that the panel is supposed to list
+     */
     public PluginPanel(final String id, final IModel<PlaceholderPlugin> aModel,
             Supplier<List<PlaceholderPlugin>> plugins)
     {
         super(id);
         setOutputMarkupId(true);
         setOutputMarkupPlaceholderTag(true);
-        
+
         overviewList = new OverviewListChoice<>("plugin");
-        overviewList.setChoiceRenderer(new ChoiceRenderer<PlaceholderPlugin>() {
+        overviewList.setChoiceRenderer(new ChoiceRenderer<PlaceholderPlugin>()
+        {
 
             private static final long serialVersionUID = 3484052447177235280L;
 

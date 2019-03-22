@@ -17,8 +17,6 @@
  */
 package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager;
 
-import static de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaBehavior.enabledWhen;
-
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -42,6 +40,16 @@ import de.tudarmstadt.ukp.clarin.webanno.support.wicket.ModelChangedVisitor;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.login.LoginPage;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.page.ApplicationPageBase;
 
+/**
+ * This page allows a registered user to manage their own plugins. From here, the user can
+ * <ol>
+ * <li>create a new plugin</li>
+ * <li>upload a new version of an existing plugin</li>
+ * <li>withdraw a plugin version</li>
+ * <li>(re-)publish a plugin version that was withdrawn or newly uploaded</li>
+ * <li>change a particular plugin version's metadata</li>
+ * </ol>
+ */
 @MountPath(value = "/pluginmgr/user.html")
 public class PluginManagerPage
     extends ApplicationPageBase
@@ -61,13 +69,14 @@ public class PluginManagerPage
 
     private IModel<PlaceholderPlugin> selectedVersion;
 
+    /**
+     * This form displays a plugin version's metadata and allows a developer or administrator to change it.
+     */
     class PluginDetailForm
         extends Form<PlaceholderPlugin>
     {
 
         private static final long serialVersionUID = -4995450803719326124L;
-
-        private boolean isCreate;
 
         public PluginDetailForm(String id, IModel<PlaceholderPlugin> aModel)
         {
@@ -76,7 +85,7 @@ public class PluginManagerPage
             setOutputMarkupId(true);
             setOutputMarkupPlaceholderTag(true);
 
-            add(new TextField<String>("name").add(enabledWhen(() -> isCreate)));
+            add(new TextField<String>("name"));
 
             add(new TextField<String>("version"));
 
@@ -141,7 +150,6 @@ public class PluginManagerPage
         });
 
         versions.setChangeAction(_target -> {
-            pluginDetails.isCreate = false;
             pluginDetails.visitChildren(new ModelChangedVisitor(selectedVersion));
             _target.add(pluginDetails);
         });
@@ -153,17 +161,46 @@ public class PluginManagerPage
         add(pluginDetails);
     }
 
+    /**
+     * This method is called in the constructor and can be overwritten by a child class if a
+     * different PluginPanel should be used.
+     * 
+     * @param id
+     *            The non-null id of this component
+     * @param model
+     *            The model for the selected plugin
+     * @param plugins
+     *            A Supplier for the list of plugins to select from
+     * @return The PluginPanel for this page
+     */
     protected PluginPanel makePluginPanel(String id, IModel<PlaceholderPlugin> model,
             Supplier<List<PlaceholderPlugin>> plugins)
     {
         return new PluginPanel(id, model, plugins);
     }
 
+    /**
+     * This method is called when the save button is clicked. It is supposed to update the version
+     * metadata in the DB with the values in the form if all of these values are of the correct
+     * format (e.g. the URL fields must actually contain URLs).
+     * 
+     * @param aTarget
+     *            The request target
+     * @param aForm
+     *            The PluginDetailForm on this page
+     */
     public void actionSave(AjaxRequestTarget aTarget, Form<PlaceholderPlugin> aForm)
     {
         info("Plugin details would have been saved if this was the real app.");
     }
 
+    /**
+     * This method is called when the cancel button is clicked. It unselects the currently selected
+     * plugin and version and thus hides everything but the PluginPanel.
+     * 
+     * @param aTarget
+     *            The request target
+     */
     private void actionCancel(AjaxRequestTarget aTarget)
     {
         selectedPlugin.setObject(null);
@@ -173,14 +210,26 @@ public class PluginManagerPage
         aTarget.add(plugins);
     }
 
+    /**
+     * This method is called when the withdraw button is clicked. It is supposed to do these things:
+     * <ul>
+     * <li>make the selected plugin version invisible on the plugin download page</li>
+     * <li>hide the withdraw button</li>
+     * <li>show the publish button (not implemented yet)</li>
+     * </ul>
+     * 
+     * @param aTarget
+     *            The request target
+     * @param aForm
+     *            The PluginDetailForm on this page
+     */
     public void actionWithdraw(AjaxRequestTarget aTarget, Form<PlaceholderPlugin> aForm)
     {
         info("The selected plugin version would have been withdrawn if this was the real app.");
     }
 
     /**
-     * @return menu items corresponding to the plugins that can be managed by this PluginManagerPage
-     *         instance.
+     * @return A List of all plugins that can be managed by this PluginManagerPage instance.
      */
     protected List<PlaceholderPlugin> applicablePlugins()
     {

@@ -21,24 +21,29 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * This class creates example PlaceholderPlugins for testing the PluginManagerPage. It will be
+ * unnecessary once an actual plugin database exists.
+ */
 public class PlaceholderPluginList
 {
     public static List<PlaceholderPlugin> userPlugins()
     {
-        return Arrays.stream(new String[] {"My first plugin",
-                "My second plugin", "My third plugin"})
-                .map(x -> new PlaceholderPlugin(x, "Me",
-                        "0.0.1", x, "Example License", "", ""))
+        return Arrays
+                .stream(new String[] { "My first plugin", "My second plugin", "My third plugin" })
+                .map(x -> new PlaceholderPlugin(x, "Me", "0.0.1", x, "Example License",
+                        "http://www.example.com", "http://docs.example.com"))
                 .collect(Collectors.toList());
     }
-    
+
     public static List<PlaceholderPlugin> allPlugins()
     {
         List<PlaceholderPlugin> allPlugins = userPlugins();
-        allPlugins.addAll(Arrays.stream(new String[] {"Someone else's first plugin",
-                "Someone else's second plugin", "Someone else's third plugin"})
-                .map(x -> new PlaceholderPlugin(x, "Someone else",
-                        "0.0.1", x, "Example License", "", ""))
+        allPlugins.addAll(Arrays
+                .stream(new String[] { "Someone else's first plugin",
+                        "Someone else's second plugin", "Someone else's third plugin" })
+                .map(x -> new PlaceholderPlugin(x, "Someone else", "0.0.1", x, "Example License",
+                        "http://www.example.com", "http://docs.example.com"))
                 .collect(Collectors.toList()));
         return allPlugins;
     }

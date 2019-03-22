@@ -21,6 +21,13 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * This class is a placeholder for the UI mock-ups and will be replaced either by a single Plugin
+ * class or a Plugin class and a PluginVersion class that represent plugins in the database.
+ * 
+ * Its fields contain the metadata that will be stored in addition to the plugin *.jar files
+ * themselves.
+ */
 public class PlaceholderPlugin
     implements Serializable
 {
@@ -100,12 +107,20 @@ public class PlaceholderPlugin
     {
         this.docPage = docPage;
     }
-    
+
     public String toString()
     {
         return name + " (" + getID() + ") " + version;
     }
-    
+
+    /**
+     * Because a plugin name and author might change between versions, a unique identifier is
+     * necessary. In the actual Plugin class, this identifier might for example be a hash of the
+     * first version's *.jar file or it might be a human-readable string derived from the first
+     * version's name and upload timestamp (e.g. myplugin-2019-04-01-1234).
+     * 
+     * @return a value that could make sense as a primary key in the database.
+     */
     public String getID()
     {
         return Integer.toHexString(id);
@@ -121,10 +136,10 @@ public class PlaceholderPlugin
         this.license = license;
         this.projectPage = projectPage;
         this.docPage = docPage;
-        
+
         this.versions = new LinkedList<>();
         versions.add(this);
-        
+
         this.id = name.hashCode() ^ author.hashCode();
     }
 
