@@ -50,14 +50,17 @@ public class AdminPluginPanel
     }
 
     /**
-     * This method is called when the "Remove Plugin" button is clicked. It is supposed to do these things:
+     * This method is called when the "Remove Plugin" button is clicked. It is supposed to do these
+     * things:
      * <ul>
      * <li>display an "Are you sure?" message - do nothing if the removal is cancelled</li>
      * <li>permanently remove the selected plugin and all of its versions from the database</li>
      * <li>unselect the selected plugin and version</li>
      * <li>refresh the PluginDetailForm, the VersionPanel and the AdminPluginPanel</li>
      * </ul>
-     * @param target The request target
+     * 
+     * @param target
+     *            The request target
      */
     private void actionRemovePlugin(AjaxRequestTarget target)
     {

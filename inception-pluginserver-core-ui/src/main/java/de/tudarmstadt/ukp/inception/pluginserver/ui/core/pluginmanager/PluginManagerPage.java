@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
@@ -70,7 +71,8 @@ public class PluginManagerPage
     private IModel<PlaceholderPlugin> selectedVersion;
 
     /**
-     * This form displays a plugin version's metadata and allows a developer or administrator to change it.
+     * This form displays a plugin version's metadata
+     * and allows a developer or administrator to change it.
      */
     class PluginDetailForm
         extends Form<PlaceholderPlugin>
@@ -98,6 +100,8 @@ public class PluginManagerPage
             add(new UrlTextField("projectPage", PropertyModel.of(this.getModel(), "projectPage")));
 
             add(new UrlTextField("docPage", PropertyModel.of(this.getModel(), "docPage")));
+            
+            add(new Label("uploadTime", this.getModel().map(x -> x.getUploadTime())));
 
             add(new LambdaAjaxButton<>("withdraw", PluginManagerPage.this::actionWithdraw));
 

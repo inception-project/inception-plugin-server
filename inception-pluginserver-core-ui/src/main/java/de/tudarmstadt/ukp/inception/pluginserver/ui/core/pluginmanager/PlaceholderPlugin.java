@@ -18,6 +18,8 @@
 package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,6 +37,7 @@ public class PlaceholderPlugin
     private static final long serialVersionUID = -4562347292826148146L;
 
     private String name, author, version, description, license, projectPage, docPage;
+    private Date uploadTime;
     private int id;
     private List<PlaceholderPlugin> versions;
 
@@ -125,6 +128,11 @@ public class PlaceholderPlugin
     {
         return Integer.toHexString(id);
     }
+    
+    public String getUploadTime()
+    {
+        return DateFormat.getDateTimeInstance().format(uploadTime);
+    }
 
     public PlaceholderPlugin(String name, String author, String version, String description,
             String license, String projectPage, String docPage)
@@ -139,6 +147,8 @@ public class PlaceholderPlugin
 
         this.versions = new LinkedList<>();
         versions.add(this);
+        
+        this.uploadTime = new Date();
 
         this.id = name.hashCode() ^ author.hashCode();
     }
