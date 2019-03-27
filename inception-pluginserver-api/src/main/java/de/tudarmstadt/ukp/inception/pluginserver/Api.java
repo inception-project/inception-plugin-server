@@ -20,8 +20,17 @@ package de.tudarmstadt.ukp.inception.pluginserver;
 
 import org.pf4j.ExtensionPoint;
 
+/** 
+ * Test interface to interact with the connected plugins on the basis of interface <b>ExtensionPoint</b> (PF4J).
+ * @see ExtensionPoint
+ * @author vladzb1
+*/
 public interface Api extends ExtensionPoint {
 
+    /**
+     * Method to retrieve the test message from the plugin
+     * @return Test message from the plugin
+     */
     String getTestMessage();
 
 }

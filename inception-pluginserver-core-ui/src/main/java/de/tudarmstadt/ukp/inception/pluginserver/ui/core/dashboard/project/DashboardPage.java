@@ -17,7 +17,6 @@
  */
 package de.tudarmstadt.ukp.inception.pluginserver.ui.core.dashboard.project;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,6 +45,11 @@ public class DashboardPage extends ApplicationPageBase
 
     private @SpringBean UserDao userRepository;
     private @SpringBean MenuItemRegistry menuItemService;
+    
+    /*
+     * Use <b>PluginManager</b> {@link PluginManager}
+     * @author vladzb1
+     */
     private @SpringBean PluginManager pluginManager;
 
     private DashboardMenu menu;
@@ -75,12 +79,15 @@ public class DashboardPage extends ApplicationPageBase
         
         List<MenuItem> menuItems = menuItemService.getMenuItems();
         
+        /** Get a list of plug-ins and their extensions */
         List<ApiUiCore> plugins = pluginManager.getExtensions(ApiUiCore.class);
         System.out.println(String.format("Found %d extensions for extension point '%s'", 
                 plugins.size(), ApiUiCore.class.getName()));
         
+        /** Create an instance of the page and menu item */
         NewPluginMenuItem menuItem = new NewPluginMenuItem();
         
+        /** Get data to add to the menu from each connected active plugin */
         for (ApiUiCore plugin : plugins) {
             System.out.println(">>> " + plugin.getMenuItem().getName());
             System.out.println(">>> pluginName " + plugin.getPluginName());

@@ -92,6 +92,11 @@ public class INCEpTIONPluginServer
         return tomcat;
     }
     
+    /**
+     * Initialize <b>PluginManager</b> {@link PluginManager} for Spring
+     * @author vladzb1
+     * @return SpringPluginManager
+     */
     @Bean
     public SpringPluginManager pluginManager() {
         File path = new File(System.getProperty(SettingsUtil.getPropApplicationHome(),

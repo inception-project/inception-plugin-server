@@ -21,10 +21,24 @@ import org.pf4j.ExtensionPoint;
 
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItem;
 
+/** 
+ * Test interface to interact with the connected plugins on the basis of interface <b>ExtensionPoint</b> (PF4J).
+ * Add String menuitems title.
+ * @see ExtensionPoint
+ * @author vladzb1
+ */
 public interface ApiUiCore extends ExtensionPoint {
     
+    /**
+     * Method to get the name of the plugin
+     * @return Plugin's name
+     */
     String getPluginName();
     
+    /**
+     * Method to get page class and menu item
+     * @return Test page and menuitem
+     */
     Class<? extends MenuItem> getMenuItem();
 
 }
