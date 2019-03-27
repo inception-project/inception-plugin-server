@@ -17,12 +17,14 @@
  */
 package de.tudarmstadt.ukp.inception.pluginserver;
 
+import java.io.File;
 import java.util.Optional;
 
 import javax.swing.JWindow;
 import javax.validation.Validator;
 
 import org.apache.catalina.connector.Connector;
+import org.pf4j.spring.SpringPluginManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigurationExcludeFilter;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -86,7 +88,23 @@ public class INCEpTIONPluginServer
             ajpConnector.setPort(ajpPort);
             tomcat.addAdditionalTomcatConnectors(ajpConnector);
         }
+        
         return tomcat;
+    }
+    
+    /**
+     * Initialize <b>PluginManager</b> {@link PluginManager} for Spring
+     * @author vladzb1
+     * @return SpringPluginManager
+     */
+    @Bean
+    public SpringPluginManager pluginManager() {
+        File path = new File(System.getProperty(SettingsUtil.getPropApplicationHome(),
+                System.getProperty("user.home") + "/"
+                        + SettingsUtil.getApplicationUserHomeSubdir()),
+                "plugins");
+        
+        return new SpringPluginManager(path.toPath());
     }
 
     @Override
@@ -95,6 +113,7 @@ public class INCEpTIONPluginServer
         SpringApplicationBuilder builder = super.createSpringApplicationBuilder();
         builder.properties("running.from.commandline=false");
         init(builder);
+        
         return builder;
     }
     
@@ -111,6 +130,8 @@ public class INCEpTIONPluginServer
         // it up from there in addition to reading the built-in application.properties file.
         aBuilder.properties("spring.config.location="
                 + "${inception.pluginserver.home:${user.home}/.inception-pluginserver}/settings.properties");
+        
+        // form spring configuration
     }
     
     public static void main(String[] args) throws Exception
@@ -122,6 +143,7 @@ public class INCEpTIONPluginServer
         // Signal that we may need the shutdown dialog
         builder.properties("running.from.commandline=true");
         init(builder);
+                
         builder.sources(INCEpTIONPluginServer.class);
         builder.listeners(event -> {
             if (event instanceof ApplicationReadyEvent

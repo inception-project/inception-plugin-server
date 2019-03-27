@@ -28,12 +28,12 @@ import de.tudarmstadt.ukp.inception.pluginserver.ui.core.menubar.MenuBar;
 @org.springframework.stereotype.Component("wicketApplication")
 public class WicketApplication
     extends WicketApplicationBase
-{
+{    
     @Override
     protected void initOnce()
     {
         super.initOnce();
-
+                
         setMetaData(ApplicationPageBase.MENUBAR_CLASS, MenuBar.class);
     }
 

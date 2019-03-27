@@ -116,6 +116,8 @@
     <module>inception-pluginserver-model</module>
     <module>inception-pluginserver-core</module>
     <module>inception-pluginserver-core-ui</module>
+    <module>inception-pluginserver-api</module>
+    <module>inception-pluginserver-plugin</module>
     <module>inception-pluginserver-webapp</module>
     <module>inception-pluginserver-doc</module>
   </modules>
@@ -172,7 +174,7 @@
       <groupId>javax.activation</groupId>
       <artifactId>javax.activation-api</artifactId>
       <scope>runtime</scope>
-    </dependency>
+    </dependency>   
   </dependencies>
   <dependencyManagement>
     <dependencies>
@@ -194,6 +196,16 @@
       <dependency>
         <groupId>de.tudarmstadt.ukp.inception.pluginserver</groupId>
         <artifactId>inception-pluginserver-doc</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>de.tudarmstadt.ukp.inception.pluginserver</groupId>
+        <artifactId>inception-pluginserver-api</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>de.tudarmstadt.ukp.inception.pluginserver</groupId>
+        <artifactId>inception-pluginserver-plugin</artifactId>
         <version>0.0.1-SNAPSHOT</version>
       </dependency>
       <dependency>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018
+ * Copyright 2017
  * Ubiquitous Knowledge Processing (UKP) Lab
  * Technische Universität Darmstadt
  *
@@ -15,81 +15,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package de.tudarmstadt.ukp.inception.ui.core.dashboard.admin;
-
-import static java.util.Arrays.asList;
+package de.tudarmstadt.ukp.inception.pluginserver.ui.core.plugin.project;
 
 import java.util.List;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
-import de.tudarmstadt.ukp.clarin.webanno.support.ApplicationContextProvider;
-import de.tudarmstadt.ukp.clarin.webanno.support.SettingsUtil;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.login.LoginPage;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItem;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItemRegistry;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.page.ApplicationPageBase;
-import de.tudarmstadt.ukp.inception.pluginserver.ui.core.dashboard.DashboardMenu;
+import de.tudarmstadt.ukp.inception.pluginserver.ui.core.plugin.PluginMenu;
 
 /**
- * Admin menu page.
+ * Project plugin page
  */
-@MountPath(value = "/manage/overview.html")
-public class AdminDashboardPage
-    extends ApplicationPageBase
+@MountPath(value = "/plugin.html")
+public class PluginPage extends ApplicationPageBase
 {
     private static final long serialVersionUID = -2487663821276301436L;
 
     private @SpringBean UserDao userRepository;
     private @SpringBean MenuItemRegistry menuItemService;
 
-    private DashboardMenu menu;
+    private PluginMenu menu;
 
-    public AdminDashboardPage()
-    {
+    public PluginPage()
+    {   
         setStatelessHint(true);
         setVersioned(false);
         
         // In case we restore a saved session, make sure the user actually still exists in the DB.
-        // redirect to login page (if no user is found, admin/admin will be created)
+        // redirect to login page (if no usr is found, admin/admin will be created)
         User user = userRepository.getCurrentUser();
         if (user == null) {
             setResponsePage(LoginPage.class);
         }
-                
-        menu = new DashboardMenu("menu", LoadableDetachableModel.of(this::getMenuItems));
+                        
+        menu = new PluginMenu("menu", LoadableDetachableModel.of(this::getMenuItems));
         add(menu);
+        
+        add(new Label("helloMessage", "Hello WicketWorld!"));
     }
     
     private List<MenuItem> getMenuItems()
     {
         return menuItemService.getMenuItems().stream()
-                .filter(item -> item.getPath().matches("/admin/[^/]+"))
+                .filter(item -> item.getPath().matches("/[^/]+"))
                 .collect(Collectors.toList());
-    }
-
-    public static boolean adminAreaAccessRequired(UserDao aUserRepo)
-    {
-        User user = aUserRepo.getCurrentUser();
-        
-        // Admins need access to the admin area to manage projects 
-        if (aUserRepo.isAdministrator(user)) {
-            return true;
-        }
-    
-        // If users are allowed to access their profile information, the also need to access the
-        // admin area. Note: access to the users own profile should be handled differently.
-        List<String> activeProfiles = asList(ApplicationContextProvider.getApplicationContext()
-                .getEnvironment().getActiveProfiles());
-        Properties settings = SettingsUtil.getSettings();
-        return !activeProfiles.contains("auto-mode-preauth") && "true"
-                        .equals(settings.getProperty(SettingsUtil.CFG_USER_ALLOW_PROFILE_ACCESS));
     }
 }
