@@ -18,36 +18,72 @@
 package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxButton;
 
-
+/**
+ * This class is a PluginManagerPage for managing not just the user's own plugins, but all plugins
+ * on the server. It adds buttons to permanently remove a plugin or plugin version from the server.
+ * These features are intended to be used by administrators.
+ */
 @MountPath(value = "/pluginmgr/admin.html")
-public class AdminPluginManagerPage extends PluginManagerPage
+public class AdminPluginManagerPage
+    extends PluginManagerPage
 {
 
     private static final long serialVersionUID = -3689156510746843965L;
-    
+
     public AdminPluginManagerPage()
     {
         super();
-        pluginDetails.add(new LambdaAjaxButton<>("remove", this::actionRemove));
+        pluginDetails.add(new LambdaAjaxButton<>("removeVersion", this::actionRemoveVersion));
     }
 
+    /**
+     * @return A List of all plugins on the server
+     */
     @Override
     protected List<PlaceholderPlugin> applicablePlugins()
     {
         // TODO return all plugins on the server
         return PlaceholderPluginList.allPlugins();
     }
-    
-    private void actionRemove(AjaxRequestTarget aTarget, Form<PlaceholderPlugin> aForm)
+
+    /**
+     * @return An AdminPluginPanel that includes a button to permanently remove a plugin from the
+     *         server
+     */
+    @Override
+    protected PluginPanel makePluginPanel(String id, IModel<PlaceholderPlugin> model,
+            Supplier<List<PlaceholderPlugin>> plugins)
     {
-        //TODO: remove the selected plugin from the server
+        return new AdminPluginPanel(id, model, plugins);
+    }
+
+    /**
+     * This method is called when the "Remove this version" button is clicked. It is supposed to do
+     * these things:
+     * <ul>
+     * <li>display an "Are you sure?" message - do nothing if the removal is cancelled</li>
+     * <li>permanently remove the selected plugin version from the database</li>
+     * <li>unselect the selected plugin version</li>
+     * <li>refresh the PluginDetailForm and the VersionPanel</li>
+     * </ul>
+     * 
+     * @param aTarget
+     *            The request target
+     * @param aForm
+     *            The PluginDetailForm on this page
+     */
+    private void actionRemoveVersion(AjaxRequestTarget aTarget, Form<PlaceholderPlugin> aForm)
+    {
+        // TODO: remove the selected plugin version from the server
     }
 
 }

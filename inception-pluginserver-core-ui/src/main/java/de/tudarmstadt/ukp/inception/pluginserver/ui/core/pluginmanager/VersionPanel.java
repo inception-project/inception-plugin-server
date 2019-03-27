@@ -1,14 +1,14 @@
 /*
  * Copyright 2019
- * Ubiquitous Knowledge Processing (UKP) Lab and FG Language Technology
+ * Ubiquitous Knowledge Processing (UKP) Lab
  * Technische Universität Darmstadt
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,8 +17,7 @@
  */
 package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager;
 
-import java.util.List;
-import java.util.function.Supplier;
+import java.util.Collections;
 
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.model.IModel;
@@ -29,32 +28,34 @@ import de.tudarmstadt.ukp.clarin.webanno.support.wicket.ListPanel_ImplBase;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.OverviewListChoice;
 
 /**
- * With this panel, a plugin can be selected from a list of plugins.
+ * With this panel, a particular version can be selected from all versions of one plugin.
  */
-public class PluginPanel
+public class VersionPanel
     extends ListPanel_ImplBase
 {
+    private static final long serialVersionUID = 7143511570153129695L;
 
-    private static final long serialVersionUID = -4179642903213029874L;
-
-    protected OverviewListChoice<PlaceholderPlugin> overviewList;
+    private IModel<PlaceholderPlugin> pluginModel;
+    private OverviewListChoice<PlaceholderPlugin> overviewList;
 
     /**
-     * Creates a PluginPanel.
+     * Creates a VersionPanel.
      * 
      * @param id
      *            The non-null id of this component
-     * @param aModel
-     *            The model of the plugin whose versions can be selected in a VersionPanel
-     * @param plugins
-     *            A Supplier of a List of all plugins that the panel is supposed to list
+     * @param pluginModel
+     *            The model of the plugin whose versions can be selected
+     * @param versionModel
+     *            The model of the selected plugin version
      */
-    public PluginPanel(final String id, final IModel<PlaceholderPlugin> aModel,
-            Supplier<List<PlaceholderPlugin>> plugins)
+    public VersionPanel(String id, IModel<PlaceholderPlugin> pluginModel,
+            IModel<PlaceholderPlugin> versionModel)
     {
-        super(id);
+        super(id, pluginModel);
         setOutputMarkupId(true);
         setOutputMarkupPlaceholderTag(true);
+
+        this.pluginModel = pluginModel;
 
         overviewList = new OverviewListChoice<>("plugin");
         overviewList.setChoiceRenderer(new ChoiceRenderer<PlaceholderPlugin>()
@@ -65,14 +66,26 @@ public class PluginPanel
             @Override
             public Object getDisplayValue(PlaceholderPlugin aPlugin)
             {
-                return aPlugin.getName() + ": " + aPlugin.getID();
+                return aPlugin.getVersion();
             }
         });
-        overviewList.setModel(aModel);
-        overviewList.setChoices(plugins.get());
+        overviewList.setModel(versionModel);
+        overviewList
+                .setChoices(pluginModel.map(x -> x.getVersions()).orElse(Collections.emptyList()));
         overviewList.add(new LambdaAjaxFormComponentUpdatingBehavior("change", this::onChange));
         add(overviewList);
 
-        add(new LambdaAjaxLink("create", this::actionCreate));
+        add(new LambdaAjaxLink("upload", this::actionCreate));
     }
+
+    @Override
+    protected void onConfigure()
+    {
+        super.onConfigure();
+
+        this.setVisible(pluginModel.getObject() != null);
+
+        overviewList.getModel().setObject(null);
+    }
+
 }

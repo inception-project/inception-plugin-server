@@ -25,6 +25,9 @@ import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItem;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager.PluginManagerPage;
 
+/**
+ * This menu item on the user dashboard links to the PluginManagerPage.
+ */
 @Component
 public class UserPluginMgrMenuItem implements MenuItem
 {

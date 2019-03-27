@@ -18,17 +18,27 @@
 package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * This class is a placeholder for the UI mock-ups and will be replaced either by a single Plugin
+ * class or a Plugin class and a PluginVersion class that represent plugins in the database.
+ * 
+ * Its fields contain the metadata that will be stored in addition to the plugin *.jar files
+ * themselves.
+ */
 public class PlaceholderPlugin
     implements Serializable
 {
 
     private static final long serialVersionUID = -4562347292826148146L;
 
-    private String name, author, version, description, license;
-    private boolean enabled;
+    private String name, author, version, description, license, projectPage, docPage;
+    private Date uploadTime;
+    private int id;
     private List<PlaceholderPlugin> versions;
 
     public String getName()
@@ -81,37 +91,71 @@ public class PlaceholderPlugin
         this.license = license;
     }
 
-    public boolean isEnabled()
+    public String getProjectPage()
     {
-        return enabled;
+        return projectPage;
     }
 
-    public void setEnabled(boolean enabled)
+    public void setProjectPage(String projectPage)
     {
-        this.enabled = enabled;
+        this.projectPage = projectPage;
     }
-    
+
+    public String getDocPage()
+    {
+        return docPage;
+    }
+
+    public void setDocPage(String docPage)
+    {
+        this.docPage = docPage;
+    }
+
     public String toString()
     {
-        return name + " " + version;
+        return name + " (" + getID() + ") " + version;
+    }
+
+    /**
+     * Because a plugin name and author might change between versions, a unique identifier is
+     * necessary. In the actual Plugin class, this identifier might for example be a hash of the
+     * first version's *.jar file or it might be a human-readable string derived from the first
+     * version's name and upload timestamp (e.g. myplugin-2019-04-01-1234).
+     * 
+     * @return a value that could make sense as a primary key in the database.
+     */
+    public String getID()
+    {
+        return Integer.toHexString(id);
+    }
+    
+    public String getUploadTime()
+    {
+        return DateFormat.getDateTimeInstance().format(uploadTime);
     }
 
     public PlaceholderPlugin(String name, String author, String version, String description,
-            String license, boolean enabled)
+            String license, String projectPage, String docPage)
     {
         this.name = name;
         this.description = description;
         this.author = author;
         this.version = version;
-        this.setLicense(license);
-        this.enabled = enabled;
+        this.license = license;
+        this.projectPage = projectPage;
+        this.docPage = docPage;
+
         this.versions = new LinkedList<>();
         versions.add(this);
+        
+        this.uploadTime = new Date();
+
+        this.id = name.hashCode() ^ author.hashCode();
     }
 
     public PlaceholderPlugin()
     {
-        this("", "", "", "", "", false);
+        this("", "", "", "", "", "", "");
     }
 
     public List<PlaceholderPlugin> getVersions()
