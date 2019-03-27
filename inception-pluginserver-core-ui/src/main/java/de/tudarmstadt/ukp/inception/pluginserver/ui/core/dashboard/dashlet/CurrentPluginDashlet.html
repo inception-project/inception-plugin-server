@@ -28,8 +28,16 @@
         <wicket:container wicket:id="version" />
       </h4>
       <h4>
+        <wicket:container wicket:id="uploadTime" />
+      </h4>
+      <h4>
         <wicket:container wicket:id="author" />
       </h4>
+
+      <p>
+        <a wicket:id="projectPage"> Project page </a> <br /> <a
+          wicket:id="docPage"> Documentation page </a>
+      </p>
 
       <p>
         <wicket:container wicket:id="description" />
@@ -37,6 +45,11 @@
       <p>
         <wicket:container wicket:id="license" />
       </p>
+
+      <input wicket:id="download" type="submit" class="btn btn-primary"
+        wicket:message="value:download" />
+      <input wicket:id="downloadWithDeps" type="submit" class="btn btn-primary"
+        wicket:message="value:downloadWithDeps" />
     </div>
   </wicket:panel>
 </body>

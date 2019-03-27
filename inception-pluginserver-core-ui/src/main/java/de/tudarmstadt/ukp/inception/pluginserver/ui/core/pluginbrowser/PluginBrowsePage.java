@@ -17,13 +17,12 @@
  */
 package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginbrowser;
 
-import org.apache.wicket.MetaDataKey;
-import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaStatelessLink;
@@ -37,12 +36,6 @@ public class PluginBrowsePage
 {
 
     private static final long serialVersionUID = 1778391157660314718L;
-
-    public static final MetaDataKey<PlaceholderPlugin> CURRENT_PLUGIN =
-            new MetaDataKey<PlaceholderPlugin>()
-    {
-        private static final long serialVersionUID = 1L;
-    };
 
     public PluginBrowsePage()
     {
@@ -81,8 +74,9 @@ public class PluginBrowsePage
 
     protected void selectPlugin(PlaceholderPlugin currentPlugin)
     {
-        Session.get().setMetaData(CURRENT_PLUGIN, currentPlugin);
-        setResponsePage(PluginPage.class);
+        PageParameters params = new PageParameters();
+        params.add("plugin", currentPlugin.getID());
+        setResponsePage(PluginPage.class, params);
     }
 
 }

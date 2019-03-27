@@ -41,6 +41,8 @@ public class PlaceholderPlugin
     private int id;
     private List<PlaceholderPlugin> versions;
 
+    private boolean enabled;
+
     public String getName()
     {
         return name;
@@ -151,6 +153,8 @@ public class PlaceholderPlugin
         this.uploadTime = new Date();
 
         this.id = name.hashCode() ^ author.hashCode();
+        
+        this.enabled = true;
     }
 
     public PlaceholderPlugin()
@@ -166,6 +170,16 @@ public class PlaceholderPlugin
     public void setVersions(List<PlaceholderPlugin> versions)
     {
         this.versions = versions;
+    }
+
+    public boolean isEnabled()
+    {
+        return this.enabled;
+    }
+    
+    public void setEnabled(boolean enabled)
+    {
+        this.enabled = enabled;
     }
 
 }

@@ -17,12 +17,12 @@
  */
 package de.tudarmstadt.ukp.inception.pluginserver.ui.core.dashboard.dashlet;
 
-import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.LoadableDetachableModel;
 
-import de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginbrowser.PluginBrowsePage;
+import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager.PlaceholderPlugin;
 
 public class CurrentPluginDashlet
@@ -31,53 +31,31 @@ public class CurrentPluginDashlet
 
     private static final long serialVersionUID = -3431335093802133184L;
 
-    public CurrentPluginDashlet(String id)
+    public CurrentPluginDashlet(String id, PlaceholderPlugin plugin)
     {
         super(id);
 
-        add(new Label("name", LoadableDetachableModel.of(this::getPluginName)));
-        add(new Label("author", LoadableDetachableModel.of(this::getPluginAuthor)));
-        add(new Label("version", LoadableDetachableModel.of(this::getPluginVersion)));
-        add(new Label("license", LoadableDetachableModel.of(this::getPluginLicense)));
-
-        add(new Label("description", LoadableDetachableModel.of(this::getPluginDescription))
-                .setEscapeModelStrings(false));
+        add(new Label("name", plugin.getName()));
+        add(new Label("author", plugin.getAuthor()));
+        add(new Label("uploadTime", plugin.getUploadTime()));
+        add(new Label("version", plugin.getVersion()));
+        add(new Label("license", plugin.getLicense()));
+        add(new ExternalLink("projectPage", plugin.getProjectPage()));
+        add(new ExternalLink("docPage", plugin.getDocPage()));
+        add(new Label("description", plugin.getDescription()));
+        
+        add(new LambdaAjaxLink("download", x -> downloadPlugin(x, plugin)));
+        add(new LambdaAjaxLink("downloadWithDeps", x -> downloadPluginAndDeps(x, plugin)));
     }
 
-    private PlaceholderPlugin getPlugin()
+    private void downloadPluginAndDeps(AjaxRequestTarget x, PlaceholderPlugin plugin)
     {
-        PlaceholderPlugin plugin = Session.get().getMetaData(PluginBrowsePage.CURRENT_PLUGIN);
-        return plugin;
+        // left empty for now
     }
 
-    private String getPluginName()
+    private void downloadPlugin(AjaxRequestTarget x, PlaceholderPlugin plugin)
     {
-        PlaceholderPlugin plugin = getPlugin();
-        return plugin != null ? plugin.getName() : "No plugin selected";
-    }
-
-    private String getPluginAuthor()
-    {
-        PlaceholderPlugin plugin = getPlugin();
-        return plugin != null ? plugin.getAuthor() : "";
-    }
-    
-    private String getPluginVersion()
-    {
-        PlaceholderPlugin plugin = getPlugin();
-        return plugin != null ? plugin.getVersion() : "";
-    }
-    
-    private String getPluginLicense()
-    {
-        PlaceholderPlugin plugin = getPlugin();
-        return plugin != null ? plugin.getLicense() : "";
-    }
-    
-    private String getPluginDescription()
-    {
-        PlaceholderPlugin plugin = getPlugin();
-        return plugin != null ? plugin.getDescription() : "";
+        // left empty for now
     }
 
 }

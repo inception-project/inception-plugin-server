@@ -20,9 +20,10 @@ package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginbrowser;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.util.string.StringValue;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItem;
@@ -31,9 +32,11 @@ import de.tudarmstadt.ukp.clarin.webanno.ui.core.page.ApplicationPageBase;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.core.dashboard.DashboardMenu;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.core.dashboard.dashlet.CurrentPluginDashlet;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager.PlaceholderPlugin;
+import de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager.PlaceholderPluginList;
 
 @MountPath(value = "/plugin.html")
-public class PluginPage extends ApplicationPageBase
+public class PluginPage
+    extends ApplicationPageBase
 {
 
     private @SpringBean MenuItemRegistry menuItemService;
@@ -41,9 +44,9 @@ public class PluginPage extends ApplicationPageBase
     private PlaceholderPlugin plugin;
     private DashboardMenu menu;
 
-    public PluginPage()
+    public PluginPage(PageParameters params)
     {
-        this.plugin = Session.get().getMetaData(PluginBrowsePage.CURRENT_PLUGIN);
+        this.plugin = params != null ? getPluginByID(params.get("plugin")) : null;
 
         if (plugin == null) {
             setResponsePage(PluginBrowsePage.class);
@@ -52,8 +55,14 @@ public class PluginPage extends ApplicationPageBase
         menu = new DashboardMenu("menu", LoadableDetachableModel.of(this::getMenuItems));
         add(menu);
 
-        add(new CurrentPluginDashlet("currentPluginDashlet"));
+        add(new CurrentPluginDashlet("currentPluginDashlet", plugin));
 
+    }
+
+    private static PlaceholderPlugin getPluginByID(StringValue id)
+    {
+        return PlaceholderPluginList.allPlugins().stream()
+                .filter(x -> x.getID().equals(id.toString())).findAny().orElse(null);
     }
 
     private List<MenuItem> getMenuItems()
