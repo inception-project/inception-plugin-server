@@ -27,6 +27,7 @@ import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxFormComponentU
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.ListPanel_ImplBase;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.OverviewListChoice;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.Plugin;
 
 /**
  * With this panel, a plugin can be selected from a list of plugins.
@@ -37,38 +38,38 @@ public class PluginPanel
 
     private static final long serialVersionUID = -4179642903213029874L;
 
-    protected OverviewListChoice<PlaceholderPlugin> overviewList;
+    protected OverviewListChoice<Plugin> overviewList;
 
     /**
      * Creates a PluginPanel.
      * 
      * @param id
      *            The non-null id of this component
-     * @param aModel
+     * @param model
      *            The model of the plugin whose versions can be selected in a VersionPanel
      * @param plugins
      *            A Supplier of a List of all plugins that the panel is supposed to list
      */
-    public PluginPanel(final String id, final IModel<PlaceholderPlugin> aModel,
-            Supplier<List<PlaceholderPlugin>> plugins)
+    public PluginPanel(final String id, final IModel<Plugin> model,
+            Supplier<List<Plugin>> plugins)
     {
         super(id);
         setOutputMarkupId(true);
         setOutputMarkupPlaceholderTag(true);
 
         overviewList = new OverviewListChoice<>("plugin");
-        overviewList.setChoiceRenderer(new ChoiceRenderer<PlaceholderPlugin>()
+        overviewList.setChoiceRenderer(new ChoiceRenderer<Plugin>()
         {
 
             private static final long serialVersionUID = 3484052447177235280L;
 
             @Override
-            public Object getDisplayValue(PlaceholderPlugin aPlugin)
+            public Object getDisplayValue(Plugin aPlugin)
             {
-                return aPlugin.getName() + ": " + aPlugin.getID();
+                return aPlugin.newestVersion().getName() + ": " + aPlugin.getId();
             }
         });
-        overviewList.setModel(aModel);
+        overviewList.setModel(model);
         overviewList.setChoices(plugins.get());
         overviewList.add(new LambdaAjaxFormComponentUpdatingBehavior("change", this::onChange));
         add(overviewList);

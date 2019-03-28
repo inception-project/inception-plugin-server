@@ -17,7 +17,9 @@
  */
 package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.model.IModel;
@@ -26,6 +28,8 @@ import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxFormComponentU
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.ListPanel_ImplBase;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.OverviewListChoice;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.Plugin;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.PluginVersion;
 
 /**
  * With this panel, a particular version can be selected from all versions of one plugin.
@@ -35,43 +39,46 @@ public class VersionPanel
 {
     private static final long serialVersionUID = 7143511570153129695L;
 
-    private IModel<PlaceholderPlugin> pluginModel;
-    private OverviewListChoice<PlaceholderPlugin> overviewList;
+    private IModel<Plugin> pluginModel;
+    private OverviewListChoice<PluginVersion> overviewList;
 
     /**
      * Creates a VersionPanel.
      * 
      * @param id
      *            The non-null id of this component
-     * @param pluginModel
+     * @param selectedPlugin
      *            The model of the plugin whose versions can be selected
-     * @param versionModel
+     * @param selectedVersion
      *            The model of the selected plugin version
      */
-    public VersionPanel(String id, IModel<PlaceholderPlugin> pluginModel,
-            IModel<PlaceholderPlugin> versionModel)
+    public VersionPanel(String id, IModel<Plugin> selectedPlugin,
+            IModel<PluginVersion> selectedVersion)
     {
-        super(id, pluginModel);
+        super(id, selectedPlugin);
         setOutputMarkupId(true);
         setOutputMarkupPlaceholderTag(true);
 
-        this.pluginModel = pluginModel;
+        this.pluginModel = selectedPlugin;
 
         overviewList = new OverviewListChoice<>("plugin");
-        overviewList.setChoiceRenderer(new ChoiceRenderer<PlaceholderPlugin>()
+        overviewList.setChoiceRenderer(new ChoiceRenderer<PluginVersion>()
         {
 
             private static final long serialVersionUID = 3484052447177235280L;
 
             @Override
-            public Object getDisplayValue(PlaceholderPlugin aPlugin)
+            public Object getDisplayValue(PluginVersion version)
             {
-                return aPlugin.getVersion();
+                return version.getName() + " " + version.getVersionNumber();
             }
         });
-        overviewList.setModel(versionModel);
-        overviewList
-                .setChoices(pluginModel.map(x -> x.getVersions()).orElse(Collections.emptyList()));
+        overviewList.setModel(selectedVersion);
+        overviewList.setChoices(selectedPlugin.map(x -> {
+            List<PluginVersion> versions = new ArrayList<>(x.getVersions());
+            versions.sort(null);
+            return versions;
+        }).orElse(Collections.emptyList()));
         overviewList.add(new LambdaAjaxFormComponentUpdatingBehavior("change", this::onChange));
         add(overviewList);
 

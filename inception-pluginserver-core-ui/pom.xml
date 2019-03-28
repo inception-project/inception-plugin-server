@@ -28,6 +28,11 @@
   <name>INCEpTION Plugin Server - Core UI</name>
   <dependencies>
     <dependency>
+      <groupId>de.tudarmstadt.ukp.inception.pluginserver</groupId>
+      <artifactId>inception-pluginserver-core</artifactId>
+    </dependency>
+    
+    <dependency>
       <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
       <artifactId>webanno-ui-core</artifactId>
     </dependency>

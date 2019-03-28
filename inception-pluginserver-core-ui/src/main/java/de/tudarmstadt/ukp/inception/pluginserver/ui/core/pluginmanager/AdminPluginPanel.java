@@ -24,6 +24,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.Plugin;
 
 /**
  * This is a PluginPanel that includes a button to permanently remove a plugin from the database.
@@ -37,15 +38,15 @@ public class AdminPluginPanel
     /**
      * @param id
      *            The non-null id of this component
-     * @param aModel
+     * @param model
      *            The model of the plugin whose versions can be selected in a VersionPanel
      * @param plugins
      *            A Supplier of a List of all plugins that the panel is supposed to list
      */
-    public AdminPluginPanel(String id, IModel<PlaceholderPlugin> aModel,
-            Supplier<List<PlaceholderPlugin>> plugins)
+    public AdminPluginPanel(String id, IModel<Plugin> model,
+            Supplier<List<Plugin>> plugins)
     {
-        super(id, aModel, plugins);
+        super(id, model, plugins);
         add(new LambdaAjaxLink("removePlugin", this::actionRemovePlugin));
     }
 

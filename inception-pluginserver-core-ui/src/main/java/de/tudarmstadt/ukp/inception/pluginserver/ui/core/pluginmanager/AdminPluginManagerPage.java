@@ -26,6 +26,7 @@ import org.apache.wicket.model.IModel;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxButton;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.Plugin;
 
 /**
  * This class is a PluginManagerPage for managing not just the user's own plugins, but all plugins
@@ -49,10 +50,9 @@ public class AdminPluginManagerPage
      * @return A List of all plugins on the server
      */
     @Override
-    protected List<PlaceholderPlugin> applicablePlugins()
+    protected List<Plugin> applicablePlugins()
     {
-        // TODO return all plugins on the server
-        return PlaceholderPluginList.allPlugins();
+        return pluginRepository.list();
     }
 
     /**
@@ -60,8 +60,8 @@ public class AdminPluginManagerPage
      *         server
      */
     @Override
-    protected PluginPanel makePluginPanel(String id, IModel<PlaceholderPlugin> model,
-            Supplier<List<PlaceholderPlugin>> plugins)
+    protected PluginPanel makePluginPanel(String id, IModel<Plugin> model,
+            Supplier<List<Plugin>> plugins)
     {
         return new AdminPluginPanel(id, model, plugins);
     }

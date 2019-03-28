@@ -23,12 +23,14 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaStatelessLink;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.page.ApplicationPageBase;
-import de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager.PlaceholderPlugin;
-import de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager.PlaceholderPluginList;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.Plugin;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.PluginVersion;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.dao.PluginDao;
 
 @MountPath(value = "/browse.html")
 public class PluginBrowsePage
@@ -36,6 +38,8 @@ public class PluginBrowsePage
 {
 
     private static final long serialVersionUID = 1778391157660314718L;
+    
+    private @SpringBean PluginDao pluginRepository;
 
     public PluginBrowsePage()
     {
@@ -44,23 +48,24 @@ public class PluginBrowsePage
 
     private WebMarkupContainer createPluginList()
     {
-        ListView<PlaceholderPlugin> listview = new ListView<PlaceholderPlugin>("plugin",
-                LoadableDetachableModel.of(PlaceholderPluginList::allPlugins))
+        ListView<Plugin> listview = new ListView<Plugin>("plugin",
+                LoadableDetachableModel.of(() -> pluginRepository.list()))
         {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(ListItem<PlaceholderPlugin> item)
+            protected void populateItem(ListItem<Plugin> item)
             {
-                if (!item.getModelObject().isEnabled()) {
+                if (!item.getModelObject().hasEnabledVersion()) {
                     return;
                 }
                 LambdaStatelessLink pluginLink = new LambdaStatelessLink("pluginLink", () ->
                     selectPlugin(item.getModelObject()));
-                pluginLink.add(new Label("name", item.getModelObject().getName()));
+                PluginVersion currentVersion = item.getModelObject().newestVersion();
+                pluginLink.add(new Label("name", currentVersion.getName()));
                 item.add(pluginLink);
-                item.add(new Label("version", item.getModelObject().getVersion()));
+                item.add(new Label("version", currentVersion.getVersionNumber()));
             }
 
         };
@@ -72,10 +77,10 @@ public class PluginBrowsePage
         return pluginList;
     }
 
-    protected void selectPlugin(PlaceholderPlugin currentPlugin)
+    protected void selectPlugin(Plugin currentPlugin)
     {
         PageParameters params = new PageParameters();
-        params.add("plugin", currentPlugin.getID());
+        params.add("plugin", currentPlugin.getId());
         setResponsePage(PluginPage.class, params);
     }
 

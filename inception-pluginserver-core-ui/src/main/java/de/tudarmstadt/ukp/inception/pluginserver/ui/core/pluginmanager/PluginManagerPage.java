@@ -17,10 +17,13 @@
  */
 package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager;
 
+import static de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaBehavior.enabledWhen;
+
 import java.util.List;
 import java.util.function.Supplier;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.feedback.IFeedback;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -31,6 +34,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.validation.IValidatable;
+import org.apache.wicket.validation.ValidationError;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
@@ -40,6 +45,10 @@ import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.ModelChangedVisitor;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.login.LoginPage;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.page.ApplicationPageBase;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.Plugin;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.PluginVersion;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.dao.PluginDao;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.dao.PluginVersionDao;
 
 /**
  * This page allows a registered user to manage their own plugins. From here, the user can
@@ -59,43 +68,55 @@ public class PluginManagerPage
     private static final long serialVersionUID = -7182183739204537244L;
 
     private @SpringBean UserDao userRepository;
+    protected @SpringBean PluginDao pluginRepository;
+    private @SpringBean PluginVersionDao versionRepository;
 
     protected PluginPanel plugins;
 
     protected PluginDetailForm pluginDetails;
 
-    private IModel<PlaceholderPlugin> selectedPlugin;
+    private IModel<Plugin> selectedPlugin;
 
     private VersionPanel versions;
 
-    private IModel<PlaceholderPlugin> selectedVersion;
+    private IModel<PluginVersion> selectedVersion;
 
     /**
      * This form displays a plugin version's metadata
      * and allows a developer or administrator to change it.
      */
     class PluginDetailForm
-        extends Form<PlaceholderPlugin>
+        extends Form<PluginVersion>
     {
 
         private static final long serialVersionUID = -4995450803719326124L;
+        private boolean isCreatePlugin;
+        private boolean isCreateVersion;
 
-        public PluginDetailForm(String id, IModel<PlaceholderPlugin> aModel)
+        public PluginDetailForm(String id, IModel<PluginVersion> aModel)
         {
             super(id, new CompoundPropertyModel<>(aModel));
 
             setOutputMarkupId(true);
             setOutputMarkupPlaceholderTag(true);
 
-            add(new TextField<String>("name"));
+            add(new TextField<String>("name")
+                    .add(x -> validateNotBlank("Name", x))
+                    .setRequired(true));
 
-            add(new TextField<String>("version"));
+            add(new TextField<String>("version")
+                    .add(x -> validateNotBlank("Version", x))
+                    .setRequired(true));
 
-            add(new TextField<String>("author"));
+            add(new TextField<String>("author")
+                    .setRequired(true));
 
             add(new TextArea<String>("description"));
 
-            add(new TextField<String>("license"));
+            add(new TextField<String>("license")
+                    .setRequired(true)
+                    .add(x -> validateNotBlank("License", x))
+                    .add(enabledWhen(() -> isCreateVersion)));
 
             add(new UrlTextField("projectPage", PropertyModel.of(this.getModel(), "projectPage")));
 
@@ -118,6 +139,15 @@ public class PluginManagerPage
 
             setVisible(getModelObject() != null);
         }
+        
+        private void validateNotBlank(String field, IValidatable<String> aValidatable)
+        {
+            if (aValidatable.getValue().isEmpty()) {
+                aValidatable.error(new ValidationError(field + " field cannot be empty"));
+            } else if (aValidatable.getValue().isBlank()) {
+                aValidatable.error(new ValidationError(field + " field cannot be blank"));
+            }
+        }
 
     }
 
@@ -139,7 +169,13 @@ public class PluginManagerPage
         versions = new VersionPanel("versions", selectedPlugin, selectedVersion);
 
         plugins.setCreateAction(_target -> {
-            // left empty for now
+            selectedPlugin.setObject(new Plugin());
+            selectedVersion.setObject(new PluginVersion());
+            _target.add(plugins, versions, pluginDetails);
+            // Need to defer setting this field because otherwise setChangeAction below
+            // sets it back to false.
+            _target.registerRespondListener(__target -> pluginDetails.isCreatePlugin = true);
+            
         });
 
         plugins.setChangeAction(_target -> {
@@ -177,8 +213,8 @@ public class PluginManagerPage
      *            A Supplier for the list of plugins to select from
      * @return The PluginPanel for this page
      */
-    protected PluginPanel makePluginPanel(String id, IModel<PlaceholderPlugin> model,
-            Supplier<List<PlaceholderPlugin>> plugins)
+    protected PluginPanel makePluginPanel(String id, IModel<Plugin> model,
+            Supplier<List<Plugin>> plugins)
     {
         return new PluginPanel(id, model, plugins);
     }
@@ -227,17 +263,29 @@ public class PluginManagerPage
      * @param aForm
      *            The PluginDetailForm on this page
      */
-    public void actionWithdraw(AjaxRequestTarget aTarget, Form<PlaceholderPlugin> aForm)
+    public void actionWithdraw(AjaxRequestTarget aTarget, Form<PluginVersion> aForm)
     {
-        info("The selected plugin version would have been withdrawn if this was the real app.");
+        PluginVersion version = aForm.getModelObject();
+        
+        version.setEnabled(false);
+        
+        if (!versionRepository.exists(version.getVersionId())) {
+            versionRepository.create(version);
+        } else {
+            versionRepository.update(version);
+        }
+        
+        info("Plugin version has been withdrawn.");
+        
+        aTarget.add(pluginDetails);
+        aTarget.addChildren(getPage(), IFeedback.class);
     }
 
     /**
      * @return A List of all plugins that can be managed by this PluginManagerPage instance.
      */
-    protected List<PlaceholderPlugin> applicablePlugins()
+    protected List<Plugin> applicablePlugins()
     {
-        // TODO return all plugins that have been uploaded by the current user
-        return PlaceholderPluginList.userPlugins();
+        return pluginRepository.getMaintained(userRepository.getCurrentUser());
     }
 }
