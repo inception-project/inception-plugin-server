@@ -18,7 +18,6 @@
 package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.model.IModel;
@@ -47,11 +46,10 @@ public class PluginPanel
      *            The non-null id of this component
      * @param model
      *            The model of the plugin whose versions can be selected in a VersionPanel
-     * @param plugins
-     *            A Supplier of a List of all plugins that the panel is supposed to list
+     * @param listModel
+     *            A model of a List of all plugins that the panel is supposed to list
      */
-    public PluginPanel(final String id, final IModel<Plugin> model,
-            Supplier<List<Plugin>> plugins)
+    public PluginPanel(final String id, final IModel<Plugin> model, IModel<List<Plugin>> listModel)
     {
         super(id);
         setOutputMarkupId(true);
@@ -70,7 +68,7 @@ public class PluginPanel
             }
         });
         overviewList.setModel(model);
-        overviewList.setChoices(plugins.get());
+        overviewList.setChoices(listModel);
         overviewList.add(new LambdaAjaxFormComponentUpdatingBehavior("change", this::onChange));
         add(overviewList);
 

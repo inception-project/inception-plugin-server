@@ -107,15 +107,6 @@ public interface PluginDao
     List<PluginDependency> getDependencies(Plugin plugin);
 
     /**
-     * Get all {@link User} account that are maintainers of this {@link Plugin}
-     * 
-     * @param plugin
-     *            the plugin
-     * @return a list of the plugin's maintainers
-     */
-    List<User> getMaintainers(Plugin plugin);
-
-    /**
      * Get all plugins that this {@link User} maintains
      * 
      * @param user
@@ -123,4 +114,6 @@ public interface PluginDao
      * @return a list of all plugins this user maintains
      */
     List<Plugin> getMaintained(User user);
+
+    void createPluginAndVersion(Plugin plugin, PluginVersion version);
 }

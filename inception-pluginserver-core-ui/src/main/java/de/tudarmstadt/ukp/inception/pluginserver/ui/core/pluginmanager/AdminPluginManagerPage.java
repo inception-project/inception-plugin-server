@@ -18,15 +18,16 @@
 package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxButton;
 import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.Plugin;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.PluginVersion;
 
 /**
  * This class is a PluginManagerPage for managing not just the user's own plugins, but all plugins
@@ -47,12 +48,12 @@ public class AdminPluginManagerPage
     }
 
     /**
-     * @return A List of all plugins on the server
+     * @return A model of all plugins on the server
      */
     @Override
-    protected List<Plugin> applicablePlugins()
+    protected LoadableDetachableModel<List<Plugin>> applicablePlugins()
     {
-        return pluginRepository.list();
+        return LoadableDetachableModel.of(pluginRepo::list);
     }
 
     /**
@@ -61,7 +62,7 @@ public class AdminPluginManagerPage
      */
     @Override
     protected PluginPanel makePluginPanel(String id, IModel<Plugin> model,
-            Supplier<List<Plugin>> plugins)
+            IModel<List<Plugin>> plugins)
     {
         return new AdminPluginPanel(id, model, plugins);
     }
@@ -81,7 +82,7 @@ public class AdminPluginManagerPage
      * @param aForm
      *            The PluginDetailForm on this page
      */
-    private void actionRemoveVersion(AjaxRequestTarget aTarget, Form<PlaceholderPlugin> aForm)
+    private void actionRemoveVersion(AjaxRequestTarget aTarget, Form<PluginVersion> aForm)
     {
         // TODO: remove the selected plugin version from the server
     }

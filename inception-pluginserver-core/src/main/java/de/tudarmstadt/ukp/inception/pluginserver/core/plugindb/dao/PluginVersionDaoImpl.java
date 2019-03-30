@@ -90,13 +90,10 @@ public class PluginVersionDaoImpl
     {
         String query = "FROM " + PluginVersion.class.getName()
                 + " o WHERE o.versionId = :versionId";
-        
-        List<PluginVersion> plugins = entityManager
-                .createQuery(query, PluginVersion.class)
-                .setParameter("pluginId", versionId)
-                .setMaxResults(1)
-                .getResultList();
-        
+
+        List<PluginVersion> plugins = entityManager.createQuery(query, PluginVersion.class)
+                .setParameter("versionId", versionId).setMaxResults(1).getResultList();
+
         if (plugins.isEmpty()) {
             return null;
         }
@@ -118,11 +115,25 @@ public class PluginVersionDaoImpl
     @Transactional
     public List<PluginDependency> getDependencies(PluginVersion version)
     {
-        String query =
-                "FROM " + PluginDependency.class.getName() +
-                " WHERE depender = :version";
+        String query = "FROM " + PluginDependency.class.getName() + " WHERE depender = :version";
         return entityManager.createQuery(query, PluginDependency.class)
                 .setParameter("version", version).getResultList();
+    }
+
+    @Override
+    @Transactional
+    public PluginVersion updateVisibility(PluginVersion version)
+    {
+        long id = version.getVersionId();
+        boolean enabled = version.isEnabled();
+
+        String query = "UPDATE " + PluginVersion.class.getName()
+                + " SET enabled = :enabled WHERE id = :id";
+
+        entityManager.createQuery(query).setParameter("enabled", enabled).setParameter("id", id)
+                .executeUpdate();
+        
+        return get(id);
     }
 
 }

@@ -94,4 +94,6 @@ public interface PluginVersionDao
      * @return a list of all dependencies with this as the depender
      */
     List<PluginDependency> getDependencies(PluginVersion version);
+
+    PluginVersion updateVisibility(PluginVersion version);
 }

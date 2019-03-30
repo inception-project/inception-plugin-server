@@ -18,6 +18,7 @@
 package de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.dao;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -40,7 +41,7 @@ public class PluginDaoImpl
 {
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Override
     @Transactional
     public void create(Plugin plugin)
@@ -91,15 +92,12 @@ public class PluginDaoImpl
     public Plugin get(String pluginId)
     {
         Validate.notBlank(pluginId, "Plugin ID must be specified");
-        
+
         String query = "FROM " + Plugin.class.getName() + " o WHERE o.id = :pluginId";
-        
-        List<Plugin> plugins = entityManager
-                .createQuery(query, Plugin.class)
-                .setParameter("pluginId", pluginId)
-                .setMaxResults(1)
-                .getResultList();
-        
+
+        List<Plugin> plugins = entityManager.createQuery(query, Plugin.class)
+                .setParameter("pluginId", pluginId).setMaxResults(1).getResultList();
+
         if (plugins.isEmpty()) {
             return null;
         }
@@ -120,30 +118,17 @@ public class PluginDaoImpl
     @Transactional
     public List<PluginVersion> getVersions(Plugin plugin)
     {
-        String query =
-                "FROM " + PluginVersion.class.getName() +
-                " WHERE pluginId = :plugin";
-        return entityManager.createQuery(query, PluginVersion.class)
-                .setParameter("plugin", plugin).getResultList();
+        String query = "FROM " + PluginVersion.class.getName() + " WHERE pluginId = :plugin";
+        return entityManager.createQuery(query, PluginVersion.class).setParameter("plugin", plugin)
+                .getResultList();
     }
 
     @Override
     @Transactional
     public List<PluginDependency> getDependencies(Plugin plugin)
     {
-        String query =
-                "FROM " + PluginDependency.class.getName() +
-                " WHERE dependee = :plugin";
+        String query = "FROM " + PluginDependency.class.getName() + " WHERE dependee = :plugin";
         return entityManager.createQuery(query, PluginDependency.class)
-                .setParameter("plugin", plugin).getResultList();
-    }
-
-    @Override
-    @Transactional
-    public List<User> getMaintainers(Plugin plugin)
-    {
-        String query = "FROM plugin_maintainers WHERE pluginId = :plugin";
-        return entityManager.createQuery(query, User.class)
                 .setParameter("plugin", plugin).getResultList();
     }
 
@@ -151,9 +136,24 @@ public class PluginDaoImpl
     @Transactional
     public List<Plugin> getMaintained(User user)
     {
-        String query = "FROM plugin_maintainers WHERE username = :user";
-        return entityManager.createQuery(query, Plugin.class)
-                .setParameter("user", user.getUsername()).getResultList();
+        // Something like this might be better, but in HQL this is not possible:
+        //
+        // String query = "FROM plugin_maintainers WHERE username = :user";
+        // return entityManager.createQuery(query, Plugin.class)
+        // .setParameter("user", user.getUsername()).getResultList();
+
+        return list().stream()
+                .filter(x -> x.getMaintainers().contains(user))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void createPluginAndVersion(Plugin plugin, PluginVersion version)
+    {
+        entityManager.persist(plugin);
+        entityManager.persist(version);
+        entityManager.flush();
     }
 
 }

@@ -18,8 +18,10 @@
 package de.tudarmstadt.ukp.inception.pluginserver.core.plugindb;
 
 import java.io.Serializable;
-import java.sql.Blob;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -35,7 +37,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
 
 /**
  * 
@@ -45,22 +50,25 @@ import org.hibernate.annotations.UpdateTimestamp;
 public class PluginVersion
     implements Serializable, Comparable<PluginVersion>
 {
+    public static final int MAX_FILE_SIZE = 52428800; // 50 MiB
+
     private static final long serialVersionUID = -5190576226156258071L;
 
     @Id
     @GeneratedValue
     private long versionId;
 
-    @ManyToOne
-    @JoinColumn
-    private String pluginId;
-    
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id", nullable = false, updatable = false)
+    private Plugin plugin;
+
     private String name;
 
     private String versionNumber;
 
     private String author;
 
+    @Column(length = 500)
     private String description;
 
     private String license;
@@ -81,20 +89,47 @@ public class PluginVersion
 
     private boolean enabled;
 
-    @Column(nullable = true) // if the file name is null, auto-generate one
+    @Column(length = 100) // very long file names might not work on some systems
     private String fileName;
 
     @Lob
-    private Blob file;
+    @Type(type = "org.hibernate.type.MaterializedBlobType")
+    @Column(length = MAX_FILE_SIZE)
+    private byte[] file;
 
-    private Integer downloads;
+    private Integer fileSize;
+
+    private int downloads;
 
     @OneToMany(mappedBy = "depender")
+    @Column(nullable = true)
     private Set<PluginDependency> dependencies;
 
     public PluginVersion()
     {
+        // intentionally empty
+    }
 
+    public PluginVersion(Plugin plugin, User currentUser)
+    {
+        this.downloads = 0;
+        this.setDependencies(new HashSet<>());
+        this.enabled = false;
+        this.plugin = plugin;
+
+        if (plugin.getVersions() == null) {
+            plugin.setVersions(new HashSet<>(Arrays.asList(this)));
+        }
+        else {
+            plugin.getVersions().add(this);
+        }
+
+        if (plugin.getMaintainers() == null) {
+            plugin.setMaintainers(new HashSet<>(Arrays.asList(currentUser)));
+        }
+        else {
+            plugin.getMaintainers().add(currentUser);
+        }
     }
 
     public long getVersionId()
@@ -107,14 +142,14 @@ public class PluginVersion
         this.versionId = versionId;
     }
 
-    public String getPluginId()
+    public Plugin getPlugin()
     {
-        return pluginId;
+        return plugin;
     }
 
-    public void setPluginId(String pluginId)
+    public void setPlugin(Plugin plugin)
     {
-        this.pluginId = pluginId;
+        this.plugin = Objects.requireNonNull(plugin);
     }
 
     public String getName()
@@ -219,7 +254,15 @@ public class PluginVersion
 
     public String getFileName()
     {
-        return fileName;
+        if (fileName != null) {
+            return fileName;
+        }
+        else if (name != null && versionNumber != null) {
+            return name + " " + versionNumber + ".jar";
+        }
+        else {
+            return "";
+        }
     }
 
     public void setFileName(String fileName)
@@ -227,30 +270,60 @@ public class PluginVersion
         this.fileName = fileName;
     }
 
-    public Blob getFile()
+    public boolean hasFileName()
+    {
+        return fileName != null;
+    }
+
+    public Integer getFileSize()
+    {
+        if (fileSize == null) {
+            setFileSize(getFile().length);
+        }
+        return fileSize;
+    }
+
+    public void setFileSize(Integer fileSize)
+    {
+        this.fileSize = fileSize;
+    }
+
+    public byte[] getFile()
     {
         return file;
     }
 
-    public void setFile(Blob file)
+    public void setFile(byte[] file)
     {
         this.file = file;
+        this.setFileSize(file.length);
     }
 
-    public Integer getDownloads()
+    public int getDownloads()
     {
         return downloads;
     }
 
-    public void setDownloads(Integer downloads)
+    public void setDownloads(int downloads)
     {
         this.downloads = downloads;
     }
 
-    @Override
-    public int compareTo(PluginVersion o)
+    public Set<PluginDependency> getDependencies()
     {
-        return updateTime.compareTo(o.updateTime);
+        return dependencies;
+    }
+
+    public void setDependencies(Set<PluginDependency> dependencies)
+    {
+        this.dependencies = dependencies;
+    }
+
+    @Override
+    public int compareTo(PluginVersion other)
+    {
+        return ((uploadTime != null) ? uploadTime : new Date())
+                .compareTo(((other.uploadTime != null) ? other.uploadTime : new Date()));
     }
 
 }

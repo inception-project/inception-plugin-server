@@ -17,12 +17,13 @@
  */
 package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginbrowser;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ExternalLink;
+import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.request.resource.ByteArrayResource;
+import org.apache.wicket.util.lang.Bytes;
 
-import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
 import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.PluginVersion;
 
 public class PluginPagePanel
@@ -36,26 +37,41 @@ public class PluginPagePanel
         super(id);
 
         add(new Label("name", plugin.getName()));
-        add(new Label("author", plugin.getAuthor()));
-        add(new Label("uploadTime", plugin.getUploadTime()));
         add(new Label("version", plugin.getVersionNumber()));
+        add(new Label("author", plugin.getAuthor()));
         add(new Label("license", plugin.getLicense()));
+        add(new Label("description", plugin.getDescription()));
+        add(new Label("uploadTime", plugin.getUploadTime()));
+        add(new Label("updateTime", plugin.getUpdateTime()));
+
         add(new ExternalLink("projectPage", plugin.getProjectPage()));
         add(new ExternalLink("docPage", plugin.getDocPage()));
-        add(new Label("description", plugin.getDescription()));
-        
-        add(new LambdaAjaxLink("download", x -> downloadPlugin(x, plugin)));
-        add(new LambdaAjaxLink("downloadWithDeps", x -> downloadPluginAndDeps(x, plugin)));
+
+        ResourceLink<Void> downloadLink = new ResourceLink<Void>("download",
+                new ByteArrayResource("application/zip", plugin.getFile(), plugin.getFileName()));
+        downloadLink.add(
+                new Label("fileName", plugin::getFileName),
+                new Label("downloadSize", Bytes.bytes(plugin.getFileSize())::toString));
+        add(downloadLink);
+
+        add(new ResourceLink<Void>("downloadWithDeps", new ByteArrayResource("application/zip",
+                makeMultiDownload(plugin), multiDownloadName(plugin))));
     }
 
-    private void downloadPluginAndDeps(AjaxRequestTarget x, PluginVersion plugin)
+    private String multiDownloadName(PluginVersion plugin)
     {
-        // left empty for now
+        return plugin.getName() + " " + plugin.getVersionNumber() + " + dependencies.zip";
     }
 
-    private void downloadPlugin(AjaxRequestTarget x, PluginVersion plugin)
+    private byte[] makeMultiDownload(PluginVersion plugin)
     {
-        // left empty for now
+        byte[] emptyZipFile = new byte[22];
+        emptyZipFile[0] = 0x50;
+        emptyZipFile[1] = 0x4b;
+        emptyZipFile[2] = 0x05;
+        emptyZipFile[3] = 0x06;
+
+        return emptyZipFile;
     }
 
 }

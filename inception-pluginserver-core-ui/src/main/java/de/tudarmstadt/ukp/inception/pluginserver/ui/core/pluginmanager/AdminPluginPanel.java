@@ -18,7 +18,6 @@
 package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
@@ -41,10 +40,10 @@ public class AdminPluginPanel
      * @param model
      *            The model of the plugin whose versions can be selected in a VersionPanel
      * @param plugins
-     *            A Supplier of a List of all plugins that the panel is supposed to list
+     *            A model of a List of all plugins that the panel is supposed to list
      */
     public AdminPluginPanel(String id, IModel<Plugin> model,
-            Supplier<List<Plugin>> plugins)
+            IModel<List<Plugin>> plugins)
     {
         super(id, model, plugins);
         add(new LambdaAjaxLink("removePlugin", this::actionRemovePlugin));

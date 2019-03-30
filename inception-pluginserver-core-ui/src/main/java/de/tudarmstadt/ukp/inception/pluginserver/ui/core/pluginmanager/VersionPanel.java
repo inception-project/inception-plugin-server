@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.lang.Objects;
 
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxFormComponentUpdatingBehavior;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
@@ -70,7 +71,8 @@ public class VersionPanel
             @Override
             public Object getDisplayValue(PluginVersion version)
             {
-                return version.getName() + " " + version.getVersionNumber();
+                return Objects.defaultIfNull(version.getName(), "") + " "
+                        + Objects.defaultIfNull(version.getVersionNumber(), "");
             }
         });
         overviewList.setModel(selectedVersion);
@@ -92,7 +94,7 @@ public class VersionPanel
 
         this.setVisible(pluginModel.getObject() != null);
 
-        overviewList.getModel().setObject(null);
+        overviewList.configure();
     }
 
 }

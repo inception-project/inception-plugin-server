@@ -58,6 +58,7 @@ public class PluginBrowsePage
             protected void populateItem(ListItem<Plugin> item)
             {
                 if (!item.getModelObject().hasEnabledVersion()) {
+                    item.setEnabled(false);
                     return;
                 }
                 LambdaStatelessLink pluginLink = new LambdaStatelessLink("pluginLink", () ->
