@@ -19,7 +19,9 @@ package de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.dao;
 
 import java.util.List;
 
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.Plugin;
 import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.PluginDependency;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.PluginVersion;
 
 /**
  * Provide methods for plugin dependency management
@@ -85,4 +87,8 @@ public interface PluginDependencyDao
      * @return a list of all dependencies
      */
     List<PluginDependency> list();
+
+    boolean hasNonDependerRelations(PluginVersion version);
+
+    boolean hasDependers(Plugin plugin);
 }

@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -89,7 +90,8 @@ public class PluginVersion
 
     private boolean enabled;
 
-    @Column(length = 100) // very long file names might not work on some systems
+    @Column(length = 100, // very long file names might not work on some systems
+            nullable = true) //if a file name is null, the getter creates one
     private String fileName;
 
     @Lob
@@ -101,9 +103,15 @@ public class PluginVersion
 
     private int downloads;
 
-    @OneToMany(mappedBy = "depender")
+    @OneToMany(mappedBy = "depender", cascade = { CascadeType.DETACH, CascadeType.MERGE,
+            CascadeType.PERSIST, CascadeType.REFRESH })
     @Column(nullable = true)
     private Set<PluginDependency> dependencies;
+    
+    private String minAppVersion;
+    
+    @Column(nullable = true)
+    private String maxAppVersion;
 
     public PluginVersion()
     {
@@ -317,6 +325,26 @@ public class PluginVersion
     public void setDependencies(Set<PluginDependency> dependencies)
     {
         this.dependencies = dependencies;
+    }
+
+    public String getMinAppVersion()
+    {
+        return minAppVersion;
+    }
+
+    public void setMinAppVersion(String minAppVersion)
+    {
+        this.minAppVersion = minAppVersion;
+    }
+
+    public String getMaxAppVersion()
+    {
+        return maxAppVersion;
+    }
+
+    public void setMaxAppVersion(String maxAppVersion)
+    {
+        this.maxAppVersion = maxAppVersion;
     }
 
     @Override

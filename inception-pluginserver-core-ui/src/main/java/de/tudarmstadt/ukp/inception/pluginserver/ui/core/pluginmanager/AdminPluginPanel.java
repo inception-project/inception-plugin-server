@@ -20,10 +20,15 @@ package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager;
 import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxCallListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
 import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.Plugin;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.dao.PluginDao;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.dao.PluginDependencyDao;
 
 /**
  * This is a PluginPanel that includes a button to permanently remove a plugin from the database.
@@ -34,6 +39,11 @@ public class AdminPluginPanel
 
     private static final long serialVersionUID = 3663159670526519125L;
 
+    private @SpringBean PluginDependencyDao dependencyRepo;
+    private @SpringBean PluginDao pluginRepo;
+
+    private IModel<Plugin> selectedPlugin;
+
     /**
      * @param id
      *            The non-null id of this component
@@ -42,11 +52,25 @@ public class AdminPluginPanel
      * @param plugins
      *            A model of a List of all plugins that the panel is supposed to list
      */
-    public AdminPluginPanel(String id, IModel<Plugin> model,
-            IModel<List<Plugin>> plugins)
+    public AdminPluginPanel(String id, IModel<Plugin> selectedPlugin, IModel<List<Plugin>> plugins)
     {
-        super(id, model, plugins);
-        add(new LambdaAjaxLink("removePlugin", this::actionRemovePlugin));
+        super(id, selectedPlugin, plugins);
+        this.selectedPlugin = selectedPlugin;
+        add(new LambdaAjaxLink("removePlugin", this::actionRemovePlugin)
+        {
+            private static final long serialVersionUID = 2717348634115464793L;
+
+            @Override
+            protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
+            {
+                super.updateAjaxAttributes(attributes);
+
+                AjaxCallListener ajaxCallListener = new AjaxCallListener();
+                ajaxCallListener.onPrecondition(
+                        "return confirm('Are you sure you want to delete this plugin?');");
+                attributes.getAjaxCallListeners().add(ajaxCallListener);
+            }
+        });
     }
 
     /**
@@ -64,7 +88,17 @@ public class AdminPluginPanel
      */
     private void actionRemovePlugin(AjaxRequestTarget target)
     {
-        // TODO Remove all versins of the selected plugin from the server
+        Plugin plugin = selectedPlugin.getObject();
+
+        if (dependencyRepo.hasDependers(plugin)) {
+            info("Could not remove this plugin because other plugins depend on it.");
+        }
+        else {
+            pluginRepo.delete(plugin);
+            selectedPlugin.setObject(null);
+            info("Removed the selected plugin from the database.");
+            target.add(this, getParent().get("versions"), getParent().get("pluginDetails"));
+        }
     }
 
 }

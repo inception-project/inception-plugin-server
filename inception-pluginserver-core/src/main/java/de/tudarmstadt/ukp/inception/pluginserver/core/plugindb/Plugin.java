@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -60,10 +61,11 @@ public class Plugin
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
-    @OneToMany(mappedBy = "plugin")
+    @OneToMany(mappedBy = "plugin", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PluginVersion> versions;
 
-    @OneToMany(mappedBy = "dependee")
+    @OneToMany(mappedBy = "dependee", cascade = { CascadeType.DETACH, CascadeType.MERGE,
+            CascadeType.PERSIST, CascadeType.REFRESH })
     @Column(nullable = true)
     private Set<PluginDependency> dependencies;
 
@@ -119,7 +121,7 @@ public class Plugin
     public PluginVersion newestVersion()
     {
         return getVersions().stream().sorted(Comparators.comparable().reversed()).findFirst()
-                .orElseThrow(); //a plugin with no versions should not exist in the database
+                .orElseThrow(); // a plugin with no versions should not exist in the database
     }
 
     @Override
@@ -162,11 +164,11 @@ public class Plugin
         String created = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         String name = Arrays.stream(firstVersion.getName().split("[^\\p{IsAlphabetic}]+"))
                 .map(x -> (x.length() > 3) ? x.substring(0, 3) : x).reduce("", (a, b) -> a + b);
-        
+
         if (name.length() > 14) {
             name = name.substring(0, 13);
         }
-        
+
         String id = created + "_" + name;
 
         if (pluginRepository.exists(id)) {

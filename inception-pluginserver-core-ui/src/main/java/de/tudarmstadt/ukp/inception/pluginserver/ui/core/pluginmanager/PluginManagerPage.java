@@ -77,19 +77,19 @@ public class PluginManagerPage
 
     private static final long serialVersionUID = -7182183739204537244L;
 
-    private @SpringBean UserDao userRepo;
+    protected @SpringBean UserDao userRepo;
     protected @SpringBean PluginDao pluginRepo;
-    private @SpringBean PluginVersionDao versionRepo;
+    protected @SpringBean PluginVersionDao versionRepo;
 
     protected PluginPanel plugins;
 
     protected PluginDetailForm pluginDetails;
 
-    private IModel<Plugin> selectedPlugin;
+    protected IModel<Plugin> selectedPlugin;
 
-    private VersionPanel versions;
+    protected VersionPanel versions;
 
-    private IModel<PluginVersion> selectedVersion;
+    protected IModel<PluginVersion> selectedVersion;
 
     /**
      * This form displays a plugin version's metadata and allows a developer or administrator to
@@ -105,6 +105,14 @@ public class PluginManagerPage
 
         private IModel<FileUpload> fileUpload;
 
+        /**
+         * Creates a plugin detail form
+         * 
+         * @param id
+         *            The non-null id of this form
+         * @param aModel
+         *            The form's model
+         */
         public PluginDetailForm(String id, IModel<PluginVersion> aModel)
         {
             super(id, new CompoundPropertyModel<>(aModel));
@@ -144,6 +152,12 @@ public class PluginManagerPage
             add(new Label("uploadTime"));
 
             add(new Label("updateTime"));
+            
+            add(new Label("downloads"));
+            
+            add(new TextField<String>("minAppVersion").setRequired(true).add(lengthValidator));
+            
+            add(new TextField<String>("maxAppVersion").add(lengthValidator));
 
             FileUploadField uploadField = new FileUploadField("fileUpload", Model.of())
             {
@@ -152,7 +166,7 @@ public class PluginManagerPage
                 @Override
                 public boolean isRequired()
                 {
-                    return aModel.getObject().getFile() == null;
+                    return aModel.getObject() == null || aModel.getObject().getFile() == null;
                 }
             };
             uploadField.add(this::validateJarUpload);
@@ -341,9 +355,6 @@ public class PluginManagerPage
 
         aTarget.add(plugins, versions, pluginDetails);
         aTarget.addChildren(getPage(), IFeedback.class);
-        pluginDetails.configure();
-        plugins.configure();
-        versions.configure();
     }
 
     /**
@@ -390,7 +401,6 @@ public class PluginManagerPage
 
         aTarget.add(pluginDetails);
         aTarget.addChildren(getPage(), IFeedback.class);
-        pluginDetails.configure();
     }
 
     /**

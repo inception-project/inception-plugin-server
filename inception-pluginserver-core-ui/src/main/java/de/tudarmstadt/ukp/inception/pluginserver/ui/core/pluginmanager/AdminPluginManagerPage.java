@@ -20,14 +20,19 @@ package de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager;
 import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxCallListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.feedback.IFeedback;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxButton;
 import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.Plugin;
 import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.PluginVersion;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.dao.PluginDependencyDao;
 
 /**
  * This class is a PluginManagerPage for managing not just the user's own plugins, but all plugins
@@ -41,10 +46,27 @@ public class AdminPluginManagerPage
 
     private static final long serialVersionUID = -3689156510746843965L;
 
+    private @SpringBean PluginDependencyDao dependencyRepo;
+
     public AdminPluginManagerPage()
     {
         super();
-        pluginDetails.add(new LambdaAjaxButton<>("removeVersion", this::actionRemoveVersion));
+        pluginDetails
+                .add(new LambdaAjaxButton<PluginVersion>("removeVersion", this::actionRemoveVersion)
+                {
+                    private static final long serialVersionUID = 2238594308806271237L;
+
+                    @Override
+                    protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
+                    {
+                        super.updateAjaxAttributes(attributes);
+
+                        AjaxCallListener ajaxCallListener = new AjaxCallListener();
+                        ajaxCallListener.onPrecondition(
+                                "return confirm('Are you sure you want to delete this version?');");
+                        attributes.getAjaxCallListeners().add(ajaxCallListener);
+                    }
+                });
     }
 
     /**
@@ -80,11 +102,25 @@ public class AdminPluginManagerPage
      * @param aTarget
      *            The request target
      * @param aForm
-     *            The PluginDetailForm on this page
+     *            ignored - this method always uses the PluginDetailForm on this page
      */
     private void actionRemoveVersion(AjaxRequestTarget aTarget, Form<PluginVersion> aForm)
     {
-        // TODO: remove the selected plugin version from the server
+        PluginVersion version = selectedVersion.getObject();
+
+        if (dependencyRepo.hasNonDependerRelations(version)) {
+            info("Could not remove this version because it is the minimum "
+                    + "or maximum dependee version in at least one dependency relation.");
+        }
+        else {
+            versionRepo.delete(version);
+            selectedVersion.setObject(null);
+            info("Removed the selected version from the database.");
+            aTarget.add(plugins, versions, pluginDetails);
+
+        }
+
+        aTarget.addChildren(getPage(), IFeedback.class);
     }
 
 }

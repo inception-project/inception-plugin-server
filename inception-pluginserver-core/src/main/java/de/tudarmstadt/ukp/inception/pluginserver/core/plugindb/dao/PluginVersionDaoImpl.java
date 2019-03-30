@@ -136,4 +136,20 @@ public class PluginVersionDaoImpl
         return get(id);
     }
 
+    @Override
+    @Transactional
+    public PluginVersion registerDownload(PluginVersion version)
+    {
+        long id = version.getVersionId();
+        int downloads = version.getDownloads() + 1;
+
+        String query = "UPDATE " + PluginVersion.class.getName()
+                + " SET downloads = :downloads WHERE id = :id";
+
+        entityManager.createQuery(query).setParameter("downloads", downloads).setParameter("id", id)
+                .executeUpdate();
+        
+        return get(id);
+    }
+
 }

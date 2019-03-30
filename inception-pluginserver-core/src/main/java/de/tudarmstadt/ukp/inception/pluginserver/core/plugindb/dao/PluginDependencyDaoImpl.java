@@ -25,7 +25,9 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.Plugin;
 import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.PluginDependency;
+import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.PluginVersion;
 
 /**
  * Implementation of methods defined in the {@link PluginDependencyDao} interface
@@ -86,16 +88,13 @@ public class PluginDependencyDaoImpl
     @Override
     @Transactional
     public PluginDependency get(long dependencyId)
-    {   
+    {
         String query = "FROM " + PluginDependency.class.getName()
                 + " o WHERE o.dependencyId = :depId";
-        
-        List<PluginDependency> plugins = entityManager
-                .createQuery(query, PluginDependency.class)
-                .setParameter("depId", dependencyId)
-                .setMaxResults(1)
-                .getResultList();
-        
+
+        List<PluginDependency> plugins = entityManager.createQuery(query, PluginDependency.class)
+                .setParameter("depId", dependencyId).setMaxResults(1).getResultList();
+
         if (plugins.isEmpty()) {
             return null;
         }
@@ -111,6 +110,27 @@ public class PluginDependencyDaoImpl
         return entityManager
                 .createQuery("FROM " + PluginDependency.class.getName(), PluginDependency.class)
                 .getResultList();
+    }
+
+    @Override
+    @Transactional
+    public boolean hasNonDependerRelations(PluginVersion version)
+    {
+        String query = "FROM " + PluginDependency.class.getName()
+                + " WHERE dependeeMinVersion = :version OR dependeeMaxVersion = :version";
+
+        return !entityManager.createQuery(query, PluginDependency.class)
+                .setParameter("version", version).getResultList().isEmpty();
+    }
+
+    @Override
+    @Transactional
+    public boolean hasDependers(Plugin plugin)
+    {
+        String query = "FROM " + PluginDependency.class.getName() + " WHERE dependee = :plugin";
+
+        return !entityManager.createQuery(query, PluginDependency.class)
+                .setParameter("plugin", plugin).getResultList().isEmpty();
     }
 
 }

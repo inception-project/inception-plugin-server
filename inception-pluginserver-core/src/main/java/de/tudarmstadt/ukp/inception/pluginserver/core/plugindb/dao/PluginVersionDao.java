@@ -96,4 +96,6 @@ public interface PluginVersionDao
     List<PluginDependency> getDependencies(PluginVersion version);
 
     PluginVersion updateVisibility(PluginVersion version);
+
+    PluginVersion registerDownload(PluginVersion version);
 }
