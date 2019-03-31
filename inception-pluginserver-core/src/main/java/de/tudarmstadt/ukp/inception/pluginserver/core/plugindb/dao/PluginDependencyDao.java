@@ -24,8 +24,8 @@ import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.PluginDependency;
 import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.PluginVersion;
 
 /**
- * Provide methods for plugin dependency management
- * such as create, update, list dependency relations
+ * Provide methods for plugin dependency management such as create, update, list dependency
+ * relations
  */
 public interface PluginDependencyDao
 {
@@ -88,7 +88,21 @@ public interface PluginDependencyDao
      */
     List<PluginDependency> list();
 
+    /**
+     * Check if a {@link PluginVersion} is part of a dependency relation as depedeeMinVersion or
+     * dependeeMaxVersion
+     * 
+     * @param version
+     *            the version to be checked
+     * @return if a dependency exists where the version is dependeeMinVersion or dependeeMaxVersion
+     */
     boolean hasNonDependerRelations(PluginVersion version);
 
+    /**
+     * Check if any {@link PluginVersion}s depend on this {@link Plugin}
+     * 
+     * @param plugin the plugin to be checked
+     * @return if a dependency relation exists where this plugin is the dependee 
+     */
     boolean hasDependers(Plugin plugin);
 }

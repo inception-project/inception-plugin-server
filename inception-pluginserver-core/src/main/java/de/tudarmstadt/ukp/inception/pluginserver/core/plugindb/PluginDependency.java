@@ -32,30 +32,40 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.UpdateTimestamp;
 
 /**
+ * This class repesents a dependency relation between plugins.
  * 
+ * A plugin version (the depender) can depend on a plugin (the dependee) with optional minimum and
+ * maximum versions. This approach means that when a new version of the dependee is published, the
+ * depender is assumed to work with it. If it turns out not to work, setDependeeMaxVersion should be
+ * called with the last version that is known to work.
+ * 
+ * If a plugin version does not work but there are newer and older compatible versions, two
+ * non-overlapping dependencies should be created, i.e. dependeeMinVersion of the "newer" dependency
+ * should be a the first version after the incompatible one that works again.
  */
 @Entity
 @Table(name = "pluginDependencies")
-public class PluginDependency implements Serializable
+public class PluginDependency
+    implements Serializable
 {
     private static final long serialVersionUID = 5488874084292327492L;
 
     @Id
     @GeneratedValue
     private long dependencyId;
-    
+
     @ManyToOne
     private PluginVersion depender;
-    
+
     @ManyToOne
     private Plugin dependee;
-    
+
     @Column(nullable = true)
     private PluginVersion dependeeMinVersion;
-    
+
     @Column(nullable = true)
     private PluginVersion dependeeMaxVersion;
-    
+
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;

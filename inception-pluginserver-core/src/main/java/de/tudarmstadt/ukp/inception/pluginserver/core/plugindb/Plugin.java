@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 
@@ -45,7 +46,8 @@ import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
 import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.dao.PluginDao;
 
 /**
- * 
+ * This class represents a plugin. Most plugin data belong to the individual versions, but
+ * maintainers and dependencies as the dependee are not specific to a version.
  */
 @Entity
 @Table(name = "plugins")
@@ -108,6 +110,13 @@ public class Plugin
         this.versions = versions;
     }
 
+    /**
+     * This method returns a set of all user accounts that can manage this plugin with the
+     * PluginManagerPage. At the moment, no UI to add maintainers exists, therefore the set only
+     * ever contains the user who created the plugin.
+     * 
+     * @return a set that contains only the plugin creator
+     */
     public Set<User> getMaintainers()
     {
         return maintainers;
@@ -118,10 +127,33 @@ public class Plugin
         this.maintainers = maintainers;
     }
 
+    /**
+     * This method is used to determine the "name" of a plugin for lists like in PluginManagerPage.
+     * If the plugin has at least one enabled version, the newest enabled version is returned,
+     * otherwise the newest version.
+     * 
+     * @return either the newes or the newest enabled version of this plugin
+     * 
+     * @throws NoSuchElementException
+     *             if the plugin has no versions at all
+     */
     public PluginVersion newestVersion()
     {
-        return getVersions().stream().sorted(Comparators.comparable().reversed()).findFirst()
-                .orElseThrow(); // a plugin with no versions should not exist in the database
+        Iterator<PluginVersion> versions = getVersions().stream()
+                .sorted(Comparators.comparable().reversed()).iterator();
+
+        PluginVersion newest = versions.next();
+
+        if (!newest.isEnabled()) {
+            while (versions.hasNext()) {
+                PluginVersion v;
+                if ((v = versions.next()).isEnabled()) {
+                    return v;
+                }
+            }
+        }
+
+        return newest;
     }
 
     @Override
@@ -154,11 +186,26 @@ public class Plugin
         return other.created.equals(created);
     }
 
+    /**
+     * This method returns true if at least one version of this plugin can be downloaded.
+     * 
+     * @return if at least one version is enabled
+     */
     public boolean hasEnabledVersion()
     {
         return getVersions().stream().anyMatch(PluginVersion::isEnabled);
     }
 
+    /**
+     * This method is used by the PluginManagerPage to generate human-readable but still unique
+     * plugin IDs.
+     * 
+     * @param firstVersion
+     *            the plugin version whose name is used for the plugin ID
+     * @param pluginRepository
+     *            a PluginDao to check whether the generated ID is unique
+     * @return a unique plugin ID
+     */
     public String makeId(PluginVersion firstVersion, PluginDao pluginRepository)
     {
         String created = new SimpleDateFormat("yyyy-MM-dd").format(new Date());

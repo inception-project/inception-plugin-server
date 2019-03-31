@@ -40,7 +40,7 @@ public interface PluginVersionDao
      * 
      * @param versionId
      *            the version to update
-     * @return the version
+     * @return the updated version
      */
     PluginVersion update(PluginVersion version);
 
@@ -95,7 +95,21 @@ public interface PluginVersionDao
      */
     List<PluginDependency> getDependencies(PluginVersion version);
 
+    /**
+     * Updates only a {@link PluginVersion}'s enabled flag, ignoring all other attributes
+     * 
+     * @param version
+     *            the version to be made visible or invisible
+     * @return the updated version
+     */
     PluginVersion updateVisibility(PluginVersion version);
 
+    /**
+     * Increments a {@link PluginVersion}'s download counter by 1, ignoring all other attributes
+     * 
+     * @param version
+     *            the version to be updated
+     * @return the updated version
+     */
     PluginVersion registerDownload(PluginVersion version);
 }

@@ -82,7 +82,7 @@ public interface PluginDao
     Plugin get(String pluginId);
 
     /**
-     * Get all plugins in the system
+     * Get all {@link Plugin}s in the system
      * 
      * @return a list of all plugins
      */
@@ -107,7 +107,7 @@ public interface PluginDao
     List<PluginDependency> getDependencies(Plugin plugin);
 
     /**
-     * Get all plugins that this {@link User} maintains
+     * Get all {@link Plugin}s that this {@link User} maintains
      * 
      * @param user
      *            the user
@@ -115,5 +115,13 @@ public interface PluginDao
      */
     List<Plugin> getMaintained(User user);
 
+    /**
+     * Create a new {@link Plugin} and a new {@link PluginVersion} in a single transaction
+     * 
+     * @param plugin
+     *            the plugin to create
+     * @param version
+     *            the plugin version to create
+     */
     void createPluginAndVersion(Plugin plugin, PluginVersion version);
 }

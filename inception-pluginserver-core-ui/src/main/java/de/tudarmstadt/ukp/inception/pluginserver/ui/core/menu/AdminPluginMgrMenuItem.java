@@ -26,7 +26,7 @@ import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItem;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginmanager.AdminPluginManagerPage;
 
 /**
- * This menu item on the admin dashboard links to the AdminPluginManagerPage.
+ * This menu item on the admin dashboard links to the {@link AdminPluginManagerPage}.
  */
 @Component
 public class AdminPluginMgrMenuItem implements MenuItem

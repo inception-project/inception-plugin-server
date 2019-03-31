@@ -44,7 +44,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
 
 /**
- * 
+ * This class represents a version of a plugin. It contains the plugin file and all metadata that
+ * can change between plugin versions.
  */
 @Entity
 @Table(name = "pluginVersions")
@@ -91,7 +92,7 @@ public class PluginVersion
     private boolean enabled;
 
     @Column(length = 100, // very long file names might not work on some systems
-            nullable = true) //if a file name is null, the getter creates one
+            nullable = true) // if a file name is null, the getter creates one
     private String fileName;
 
     @Lob
@@ -107,9 +108,9 @@ public class PluginVersion
             CascadeType.PERSIST, CascadeType.REFRESH })
     @Column(nullable = true)
     private Set<PluginDependency> dependencies;
-    
+
     private String minAppVersion;
-    
+
     @Column(nullable = true)
     private String maxAppVersion;
 

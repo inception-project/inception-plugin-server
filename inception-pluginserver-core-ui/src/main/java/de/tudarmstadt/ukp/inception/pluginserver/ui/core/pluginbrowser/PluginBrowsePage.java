@@ -32,6 +32,11 @@ import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.Plugin;
 import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.PluginVersion;
 import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.dao.PluginDao;
 
+/**
+ * This page consists of a list of all plugins that can be downloaded from the server.
+ * 
+ * The list items contain links to the individual {@link PluginPage}s.
+ */
 @MountPath(value = "/browse.html")
 public class PluginBrowsePage
     extends ApplicationPageBase
@@ -51,8 +56,7 @@ public class PluginBrowsePage
         ListView<Plugin> listview = new ListView<Plugin>("plugin",
                 LoadableDetachableModel.of(() -> pluginRepository.list()))
         {
-
-            private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 833958274042572812L;
 
             @Override
             protected void populateItem(ListItem<Plugin> item)
@@ -78,7 +82,7 @@ public class PluginBrowsePage
         return pluginList;
     }
 
-    protected void selectPlugin(Plugin currentPlugin)
+    private void selectPlugin(Plugin currentPlugin)
     {
         PageParameters params = new PageParameters();
         params.add("plugin", currentPlugin.getId());

@@ -39,6 +39,10 @@ import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.PluginVersion;
 import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.dao.PluginDao;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.core.dashboard.DashboardMenu;
 
+/**
+ * This page contains one {@link PluginPagePanel} for each version of a plugin that can be
+ * downloaded.
+ */
 @MountPath(value = "/plugin.html")
 public class PluginPage
     extends ApplicationPageBase
@@ -50,6 +54,13 @@ public class PluginPage
     private Plugin plugin;
     private DashboardMenu menu;
 
+    /**
+     * Creates a new PluginPage.
+     * 
+     * @param params
+     *            a {@link PageParameters} object that contains a parameter "plugin" whose value is
+     *            the plugin ID of the page's plugin
+     */
     public PluginPage(PageParameters params)
     {
         this.plugin = params != null ? getPluginByID(params.get("plugin")) : null;
@@ -60,9 +71,9 @@ public class PluginPage
 
         menu = new DashboardMenu("menu", LoadableDetachableModel.of(this::getMenuItems));
         add(menu);
-        
+
         RepeatingView versions = new RepeatingView("versions");
-        
+
         for (PluginVersion v : versionList(plugin.getVersions())) {
             versions.add(new PluginPagePanel(versions.newChildId(), v));
         }
@@ -72,9 +83,8 @@ public class PluginPage
 
     private List<PluginVersion> versionList(Set<PluginVersion> versions)
     {
-        return versions.stream()
-                .filter(PluginVersion::isEnabled)
-                .sorted(Comparators.comparable().reversed())
+        return versions.stream().filter(PluginVersion::isEnabled)
+                .sorted(Comparators.comparable().reversed()) // newest version first
                 .collect(Collectors.toList());
     }
 

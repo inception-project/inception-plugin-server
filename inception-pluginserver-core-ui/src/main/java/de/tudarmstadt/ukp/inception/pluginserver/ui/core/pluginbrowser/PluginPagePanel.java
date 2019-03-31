@@ -36,6 +36,9 @@ import org.apache.wicket.util.lang.Bytes;
 import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.PluginVersion;
 import de.tudarmstadt.ukp.inception.pluginserver.core.plugindb.dao.PluginVersionDao;
 
+/**
+ * This panel displays one plugin version's metadata and download links.
+ */
 public class PluginPagePanel
     extends Panel
 {
@@ -47,6 +50,14 @@ public class PluginPagePanel
     private MarkupContainer counter;
     private IModel<PluginVersion> versionModel;
 
+    /**
+     * Creates a new PluginPanel
+     * 
+     * @param id
+     *            the non-null id of this panel
+     * @param version
+     *            the plugin version whose metadata and download links are displayed on this panel
+     */
     public PluginPagePanel(String id, PluginVersion version)
     {
         super(id);
@@ -82,6 +93,19 @@ public class PluginPagePanel
         return version.getName() + " " + version.getVersionNumber() + " + dependencies.zip";
     }
 
+    /**
+     * This feature is not implemented yet, this is just a placeholder that returns an empty zip
+     * file.
+     * 
+     * This method is supposed to return a byte[] containing uncompressed zip file of the plugin
+     * version and the newest available versions of all its dependees. The archive is uncompressed
+     * because the individual jar files are already compressed.
+     * 
+     * @param version
+     *            the plugin version to be downloaded
+     * @return a byte[] containing a zip file that is supposed to contain the version's own jar file
+     *         and those of the newest available versions of its dependees - right now it's empty
+     */
     private byte[] makeMultiDownload(PluginVersion version)
     {
         byte[] emptyZipFile = new byte[22];
@@ -93,6 +117,13 @@ public class PluginPagePanel
         return emptyZipFile;
     }
 
+    /**
+     * Returns a download link for the plugin version that increments the download counter when
+     * clicked.
+     * 
+     * @param version
+     *            the plugin version to be downloaded
+     */
     private void initAjaxDownloadLink(PluginVersion version)
     {
         ResourceReference reference = new ResourceReference("referenceToResource")
@@ -117,15 +148,17 @@ public class PluginPagePanel
                 target.appendJavaScript("alert('Download failed');");
             }
 
-            @Override
-            protected void onDownloadSuccess(AjaxRequestTarget target)
-            {
-                versionModel.setObject(versionRepo.registerDownload(version));
-                ;
-
-                counter.modelChanged();
-                target.add(PluginPagePanel.this);
-            }
+            // This method is never called, so for the time being
+            // the download counter actually counts download attempts
+            //
+            // @Override
+            // protected void onDownloadSuccess(AjaxRequestTarget target)
+            // {
+            // versionModel.setObject(versionRepo.registerDownload(version));
+            //
+            // counter.modelChanged();
+            // target.add(PluginPagePanel.this);
+            // }
         };
         add(download);
 
@@ -137,6 +170,10 @@ public class PluginPagePanel
             public void onClick(AjaxRequestTarget target)
             {
                 download.initiate(target);
+                versionModel.setObject(versionRepo.registerDownload(version));
+
+                counter.modelChanged();
+                target.add(PluginPagePanel.this, counter);
             }
         };
 

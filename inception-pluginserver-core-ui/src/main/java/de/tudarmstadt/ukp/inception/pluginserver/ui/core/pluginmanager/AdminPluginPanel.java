@@ -74,8 +74,7 @@ public class AdminPluginPanel
     }
 
     /**
-     * This method is called when the "Remove Plugin" button is clicked. It is supposed to do these
-     * things:
+     * This method is called when the "Remove Plugin" button is clicked. It does these things:
      * <ul>
      * <li>display an "Are you sure?" message - do nothing if the removal is cancelled</li>
      * <li>permanently remove the selected plugin and all of its versions from the database</li>

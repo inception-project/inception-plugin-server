@@ -136,7 +136,7 @@ public class PluginDaoImpl
     @Transactional
     public List<Plugin> getMaintained(User user)
     {
-        // Something like this might be better, but in HQL this is not possible:
+        // Something like this might be better, but in HQL selects don't work with join tables:
         //
         // String query = "FROM plugin_maintainers WHERE username = :user";
         // return entityManager.createQuery(query, Plugin.class)

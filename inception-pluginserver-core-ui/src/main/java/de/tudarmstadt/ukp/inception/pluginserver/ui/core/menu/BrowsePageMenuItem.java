@@ -23,6 +23,9 @@ import org.springframework.stereotype.Component;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItem;
 import de.tudarmstadt.ukp.inception.pluginserver.ui.core.pluginbrowser.PluginBrowsePage;
 
+/**
+ * This menu item on the dashboard links to the {@link PluginBrowsePage}.
+ */
 @Component
 public class BrowsePageMenuItem
     implements MenuItem
